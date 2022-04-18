@@ -79,24 +79,24 @@ function onCellClick(event) {
   }
   selectedCell = event.currentTarget;
   selectedCell.classList.add('selected');
-  arr= moveSoliderOptions(selectedCell);
+  arr= moveSoliderOptions(selectedCell);//current possible moves
   for (const i of arr) {
     i.classList.add('selectedoptions');
   }
 
 }
 
-function moveSoliderOptions(event){
-  let id = event.id;
-  child = event.firstChild;
+function moveSoliderOptions(event){ 
+  let id = event.id;//0-0 id of cell
+  let child = event.firstChild; // = img = #white-rook
   let arr= [];
-  let row = Number(id.split('-')[0]);
-  let col = Number(id.split('-')[1]);
-  let childname =null;
-  let childplayer =null;
-  if(child!==null){
-    childname=child.id.split('-')[1];
-   childplayer=child.id.split('-')[0]; 
+  let row = Number(id.split('-')[0]); // row = 0 (num) 
+  let col = Number(id.split('-')[1]); // col = 0 (num)
+  let childname =null; //rook queen 
+  let childplayer =null; // dark or white
+  if(child!==null){ //if empty cell
+    childname=child.id.split('-')[1]; //rook 
+   childplayer=child.id.split('-')[0]; // white
   console.log(row + "  " + col+ ' ' + childplayer + ' ' +childname);
   }
  
@@ -113,7 +113,7 @@ function moveSoliderOptions(event){
     arr=knightmove(row,col,childname ,childplayer);//check valid moves of knight
   }
   if (childname==='rook') {
-    arr=rookmove(row,col,childname ,childplayer);//check valid moves of rook
+    arr=rookmove(row,col,childname ,childplayer);//
   }
   if (childname==='pawn') {
     arr=pawnsmove(row,col,childname ,childplayer);//check valid moves of pawns
@@ -368,12 +368,12 @@ function queenmove(row ,col,name,player) {
 
 
 function rookmove(row ,col,name,player) {
-  const movearr= [];
+  const movearr= []; //shows me possibilities of rook
  
-  if (name==='rook') {
+  
     
  
-      for (let i = 1; i < 8; i++) {
+      for (let i = 1; i < 8; i++) { //0-0
         if (document.getElementById((row)+'-'+(col-i))===null) {//only left
           break
         }
@@ -389,7 +389,7 @@ function rookmove(row ,col,name,player) {
             if (document.getElementById((row)+'-'+(col+i))===null) {//only right
               break
             }
-            movearr.push(document.getElementById((row)+'-'+(col+i)))
+            movearr.push(document.getElementById((row)+'-'+(col+i)))//0-1 0-2 0-3 0-4 0-5 0-6 0-7 
             }
             for (let i = 1; i < 8; i++) {
               if (document.getElementById((row-i)+'-'+(col))===null) {//only up
@@ -403,7 +403,7 @@ function rookmove(row ,col,name,player) {
       
   
  return movearr;
-  }
+  
  
       
 }
