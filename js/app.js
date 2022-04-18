@@ -71,18 +71,25 @@ function addImageByIndex(cell, player, index) {
 }
 
 function onCellClick(event) {
-  if (selectedCell !== undefined) {
+  if (selectedCell !== undefined&&arr!==null) {
     selectedCell.classList.remove('selected');
+    for (const i of arr) {
+      i.classList.remove('selectedoptions');
+    }
   }
   selectedCell = event.currentTarget;
   selectedCell.classList.add('selected');
-  moveSoliderOptions(selectedCell);
+  arr= moveSoliderOptions(selectedCell);
+  for (const i of arr) {
+    i.classList.add('selectedoptions');
+  }
 
 }
 
 function moveSoliderOptions(event){
   let id = event.id;
   child = event.firstChild;
+  let arr= [];
   let row = Number(id.split('-')[0]);
   let col = Number(id.split('-')[1]);
   let childname =null;
@@ -93,13 +100,83 @@ function moveSoliderOptions(event){
   console.log(row + "  " + col+ ' ' + childplayer + ' ' +childname);
   }
  
-  
-    console.log(knightmove(row,col,childname ,childplayer));
-
-  
- 
+  if (childname==='queen') {
+    arr=queenmove(row,col,childname ,childplayer); //check valid moves of queen
+  }
+  if (childname==='king') {
+    arr=kingmove(row,col,childname ,childplayer); //check valid moves of king
+  }
+  if (childname==='bishop') {
+    arr=bishopmove(row,col,childname ,childplayer);//check valid moves of bishop
+  }
+  if (childname==='knight') {
+    arr=knightmove(row,col,childname ,childplayer);//check valid moves of knight
+  }
+  if (childname==='rook') {
+    arr=rookmove(row,col,childname ,childplayer);//check valid moves of rook
+  }
+  if (childname==='pawn') {
+    arr=pawnsmove(row,col,childname ,childplayer);//check valid moves of pawns
+  }
+ return arr;
 
 }
+function kingmove(row ,col,name , player) {
+  const movearr= [];
+ let  a = true;
+  
+  
+   if (name==='king') {
+     
+   
+    if (document.getElementById((row)+'-'+(col-1))!==null){//one left
+
+    
+    movearr.push(document.getElementById((row)+'-'+(col-1)))} // one left
+
+    if (document.getElementById((row)+'-'+(col+1))!==null){//one right
+
+    
+      movearr.push(document.getElementById((row)+'-'+(col+1)))} // one right
+  
+      if (document.getElementById((row+1)+'-'+(col))!==null){//one up
+
+    
+        movearr.push(document.getElementById((row+1)+'-'+(col)))} // one up
+        if (document.getElementById((row+1)+'-'+(col+1))!==null){//one up one-right
+
+    
+          movearr.push(document.getElementById((row+1)+'-'+(col+1)))} // one up one-right
+          if (document.getElementById((row+1)+'-'+(col-1))!==null){//one up one-right
+
+    
+            movearr.push(document.getElementById((row+1)+'-'+(col-1)))} // one up one-right
+      
+            if (document.getElementById((row-1)+'-'+(col))!==null){//one down
+
+    
+              movearr.push(document.getElementById((row-1)+'-'+(col)))} // one down
+              if (document.getElementById((row-1)+'-'+(col+1))!==null){//one up one-right
+      
+          
+                movearr.push(document.getElementById((row-1)+'-'+(col+1)))} // one up one-right
+                if (document.getElementById((row-1)+'-'+(col-1))!==null){//one up one-right
+      
+          
+                  movearr.push(document.getElementById((row-1)+'-'+(col-1)))} // one up one-right
+                
+          return movearr;
+                }
+}
+  
+  
+  
+
+
+
+
+
+
 function knightmove(row ,col,name , player) {
   const movearr= [];
  let  a = true;
@@ -220,7 +297,67 @@ if (document.getElementById((row-1)+'-'+(col-1))!==null)
   
   
 }
-
+function queenmove(row ,col,name,player) {
+  const movearr= [];
+ 
+ 
+    
+ 
+      for (let i = 1; i < 8; i++) {
+        if (document.getElementById((row)+'-'+(col-i))===null) {//only left
+          break
+        }
+        movearr.push(document.getElementById((row)+'-'+(col-i)))
+        }
+        for (let i = 1; i < 8; i++) {
+          if (document.getElementById((row+i)+'-'+(col))===null) { // only down
+            break
+          }
+          movearr.push(document.getElementById((row+i)+'-'+(col)))
+          }
+          for (let i = 1; i < 8; i++) {
+            if (document.getElementById((row)+'-'+(col+i))===null) {//only right
+              break
+            }
+            movearr.push(document.getElementById((row)+'-'+(col+i)))
+            }
+            for (let i = 1; i < 8; i++) {
+              if (document.getElementById((row-i)+'-'+(col))===null) {//only up
+                break
+              }
+              movearr.push(document.getElementById((row-i)+'-'+(col)))
+              }
+              for (let i = 1; i < 8; i++) {
+                if (document.getElementById((row+i)+'-'+(col+i))===null) {
+                  break
+                }
+              movearr.push(document.getElementById((row+i)+'-'+(col+i)))
+              }
+              for (let i = 1; i < 8; i++) {
+                if (document.getElementById((row+i)+'-'+(col-i))===null) {
+                  break
+                }
+                movearr.push(document.getElementById((row+i)+'-'+(col-i)))
+                }
+                for (let i = 1; i < 8; i++) {
+                  if (document.getElementById((row-i)+'-'+(col-i))===null) {
+                    break
+                  }
+                  movearr.push(document.getElementById((row-i)+'-'+(col-i)))
+                  }
+                  for (let i = 1; i < 8; i++) {
+                    if (document.getElementById((row-i)+'-'+(col+i))===null) {
+                      break
+                    }
+                    movearr.push(document.getElementById((row-i)+'-'+(col+i)))
+                    }
+      
+  
+ return movearr;
+  
+ 
+      
+}
 
 
 
@@ -260,6 +397,8 @@ function rookmove(row ,col,name,player) {
               }
               movearr.push(document.getElementById((row-i)+'-'+(col)))
               }
+
+              
           
       
   

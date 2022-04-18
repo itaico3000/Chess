@@ -16,3 +16,6 @@ table {
 .selected{
   background-color: rgb(202, 202, 15);
 }
+.selectedoptions{
+  background-color: blueviolet;
+}
