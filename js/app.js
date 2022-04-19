@@ -16,7 +16,27 @@ class Piece {
     this.player = player;
   }
 }
-
+function getvalues(row , col) {
+  if (document.getElementById((row)+'-'+(col))!==null) { //in table territory
+    
+ 
+  let event = document.getElementById((row)+'-'+(col));
+  let id = event.id;//0-0 id of cell
+  let child = event.firstChild; // = img = #white-rook
+  let arr= [];
+  let indexrow = Number(id.split('-')[0]); // row = 0 (num) 
+  let indexcol = Number(id.split('-')[1]); // col = 0 (num)
+  let childname =''; //rook queen 
+  let childplayer =''; // dark or white
+  if(child!==null){ //if empty cell
+    childname=child.id.split('-')[1]; //rook 
+   childplayer=child.id.split('-')[0]; // white
+  
+  }
+  const values = {row:indexrow, col:indexcol, childname:childname, childplayer:childplayer};
+  return values;
+}
+}
 
 
 function getInitialBoard() {
@@ -123,50 +143,98 @@ function moveSoliderOptions(event){
 }
 function kingmove(row ,col,name , player) {
   const movearr= [];
- let  a = true;
-  
-  
-   if (name==='king') {
+  let values;
+   if (name==='king'&&player ==='white') {
      
-   
-    if (document.getElementById((row)+'-'+(col-1))!==null){//one left
+    values =getvalues(row,col-1);
+    if (document.getElementById((row)+'-'+(col-1))!==null && values.childplayer!=='white'){//one left
 
     
     movearr.push(document.getElementById((row)+'-'+(col-1)))} // one left
+    values =getvalues(row,col+1);
+    if (document.getElementById((row)+'-'+(col+1))!==null&& values.childplayer!=='white'){//one right
 
-    if (document.getElementById((row)+'-'+(col+1))!==null){//one right
-
-    
+      
       movearr.push(document.getElementById((row)+'-'+(col+1)))} // one right
-  
-      if (document.getElementById((row+1)+'-'+(col))!==null){//one up
+      values =getvalues(row+1,col);
+      if (document.getElementById((row+1)+'-'+(col))!==null&& values.childplayer!=='white'){//one up
 
     
         movearr.push(document.getElementById((row+1)+'-'+(col)))} // one up
-        if (document.getElementById((row+1)+'-'+(col+1))!==null){//one up one-right
+        values =getvalues(row+1,col+1);
+        if (document.getElementById((row+1)+'-'+(col+1))!==null&& values.childplayer!=='white'){//one up one-right
 
     
           movearr.push(document.getElementById((row+1)+'-'+(col+1)))} // one up one-right
-          if (document.getElementById((row+1)+'-'+(col-1))!==null){//one up one-right
+          values =getvalues(row+1,col-1);
+          if (document.getElementById((row+1)+'-'+(col-1))!==null&& values.childplayer!=='white'){//one up one-right
 
     
             movearr.push(document.getElementById((row+1)+'-'+(col-1)))} // one up one-right
-      
-            if (document.getElementById((row-1)+'-'+(col))!==null){//one down
+            values =getvalues(row-1,col);
+            if (document.getElementById((row-1)+'-'+(col))!==null&& values.childplayer!=='white'){//one down
 
     
               movearr.push(document.getElementById((row-1)+'-'+(col)))} // one down
-              if (document.getElementById((row-1)+'-'+(col+1))!==null){//one up one-right
+              values =getvalues(row-1,col+1);
+              if (document.getElementById((row-1)+'-'+(col+1))!==null&& values.childplayer!=='white' ){//one up one-right
       
           
                 movearr.push(document.getElementById((row-1)+'-'+(col+1)))} // one up one-right
-                if (document.getElementById((row-1)+'-'+(col-1))!==null){//one up one-right
+                values =getvalues(row-1,col-1);
+                if (document.getElementById((row-1)+'-'+(col-1))!==null&& values.childplayer!=='white'){//one up one-right
       
           
                   movearr.push(document.getElementById((row-1)+'-'+(col-1)))} // one up one-right
                 
           return movearr;
                 }
+                else {
+     
+                  values =getvalues(row,col-1);
+                  if (document.getElementById((row)+'-'+(col-1))!==null && values.childplayer!=='dark'){//one left
+              
+                  
+                  movearr.push(document.getElementById((row)+'-'+(col-1)))} // one left
+                  values =getvalues(row,col+1);
+                  if (document.getElementById((row)+'-'+(col+1))!==null&& values.childplayer!=='dark'){//one right
+              
+                    
+                    movearr.push(document.getElementById((row)+'-'+(col+1)))} // one right
+                    values =getvalues(row+1,col);
+                    if (document.getElementById((row+1)+'-'+(col))!==null&& values.childplayer!=='dark'){//one up
+              
+                  
+                      movearr.push(document.getElementById((row+1)+'-'+(col)))} // one up
+                      values =getvalues(row+1,col+1);
+                      if (document.getElementById((row+1)+'-'+(col+1))!==null&& values.childplayer!=='dark'){//one up one-right
+              
+                  
+                        movearr.push(document.getElementById((row+1)+'-'+(col+1)))} // one up one-right
+                        values =getvalues(row+1,col-1);
+                        if (document.getElementById((row+1)+'-'+(col-1))!==null&& values.childplayer!=='dark'){//one up one-right
+              
+                  
+                          movearr.push(document.getElementById((row+1)+'-'+(col-1)))} // one up one-right
+                          values =getvalues(row-1,col);
+                          if (document.getElementById((row-1)+'-'+(col))!==null&& values.childplayer!=='dark'){//one down
+              
+                  
+                            movearr.push(document.getElementById((row-1)+'-'+(col)))} // one down
+                            values =getvalues(row-1,col+1);
+                            if (document.getElementById((row-1)+'-'+(col+1))!==null&& values.childplayer!=='dark' ){//one up one-right
+                    
+                        
+                              movearr.push(document.getElementById((row-1)+'-'+(col+1)))} // one up one-right
+                              values =getvalues(row-1,col-1);
+                              if (document.getElementById((row-1)+'-'+(col-1))!==null&& values.childplayer!=='dark'){//one up one-right
+                    
+                        
+                                movearr.push(document.getElementById((row-1)+'-'+(col-1)))} // one up one-right
+                              
+                        return movearr;
+                              }
+
 }
   
   
@@ -212,7 +280,7 @@ function knightmove(row ,col,name , player) {
     
           movearr.push(document.getElementById((row+1)+'-'+(col+2)))} //two right one up
 
-          if (document.getElementById((row+1)+'-'+(col-2))!==null)
+          if (document.getElementById((row-1)+'-'+(col-2))!==null)
            {
             movearr.push(document.getElementById((row-1)+'-'+(col-2))) //two left one down
           }
@@ -299,62 +367,251 @@ if (document.getElementById((row-1)+'-'+(col-1))!==null)
 }
 function queenmove(row ,col,name,player) {
   const movearr= [];
- 
+  let values;
  
     
+ if (name ==='queen' &&player ==='white') {
+   
  
+  for (let i = 1; i < 8; i++) { //0-0
+        
+        
+    if (document.getElementById((row)+'-'+(col-i))===null ) {//only left
+      break
+    }
+    values=getvalues(row,col-i); // only left
+      if (values.childplayer==='white') {
+        break
+      }
+
+    movearr.push(document.getElementById((row)+'-'+(col-i)))
+    if (values.childplayer==='dark') {
+      break
+    }
+    }
+    for (let i = 1; i < 8; i++) {
+      if (document.getElementById((row+i)+'-'+(col))===null ) { // only down
+        break
+      }
+      values=getvalues(row+i,col);
+      if (values.childplayer==='white') {
+        break
+      }
+      movearr.push(document.getElementById((row+i)+'-'+(col)))
+      if (values.childplayer==='dark') {
+        break
+      }
+    }
       for (let i = 1; i < 8; i++) {
-        if (document.getElementById((row)+'-'+(col-i))===null) {//only left
+        if (document.getElementById((row)+'-'+(col+i))===null) {//only right
           break
         }
-        movearr.push(document.getElementById((row)+'-'+(col-i)))
+        values=getvalues(row,col+i);
+      if (values.childplayer==='white') {
+        break
+      }
+        movearr.push(document.getElementById((row)+'-'+(col+i)))//0-1 0-2 0-3 0-4 0-5 0-6 0-7 
+        if (values.childplayer==='dark') {
+          break
         }
+      }
         for (let i = 1; i < 8; i++) {
-          if (document.getElementById((row+i)+'-'+(col))===null) { // only down
+          if (document.getElementById((row-i)+'-'+(col))===null) {//only up
             break
           }
-          movearr.push(document.getElementById((row+i)+'-'+(col)))
+          values=getvalues(row-i,col); // get values of this cell
+      if (values.childplayer==='white') {
+        break
+      }
+         
+          movearr.push(document.getElementById((row-i)+'-'+(col)));
+          if (values.childplayer==='dark') {
+            break
           }
-          for (let i = 1; i < 8; i++) {
-            if (document.getElementById((row)+'-'+(col+i))===null) {//only right
-              break
-            }
-            movearr.push(document.getElementById((row)+'-'+(col+i)))
-            }
-            for (let i = 1; i < 8; i++) {
-              if (document.getElementById((row-i)+'-'+(col))===null) {//only up
+          }
+
+
+              //bishop
+              for (let i = 1; i < 8; i++) {
+                if (document.getElementById((row+i)+'-'+(col+i))===null) { //one right one down
+                  break
+                }
+                values=getvalues(row+i,col+i); // get values of this cell
+               if (values.childplayer==='white') {
+                   break
+               }
+              movearr.push(document.getElementById((row+i)+'-'+(col+i)));
+              if (values.childplayer==='dark') {
                 break
               }
-              movearr.push(document.getElementById((row-i)+'-'+(col)))
               }
+
+
+
+
               for (let i = 1; i < 8; i++) {
-                if (document.getElementById((row+i)+'-'+(col+i))===null) {
+                if (document.getElementById((row+i)+'-'+(col-i))===null) { //one down one left
                   break
                 }
-              movearr.push(document.getElementById((row+i)+'-'+(col+i)))
+                
+                values=getvalues(row+i,col-i); // get values of this cell
+               if (values.childplayer==='white') {
+                   break
+               }
+              movearr.push(document.getElementById((row+i)+'-'+(col-i)));
+              if (values.childplayer==='dark') {
+                break
               }
-              for (let i = 1; i < 8; i++) {
-                if (document.getElementById((row+i)+'-'+(col-i))===null) {
-                  break
-                }
-                movearr.push(document.getElementById((row+i)+'-'+(col-i)))
-                }
+                } 
                 for (let i = 1; i < 8; i++) {
-                  if (document.getElementById((row-i)+'-'+(col-i))===null) {
+                  if (document.getElementById((row-i)+'-'+(col-i))===null) { // one up one right
                     break
                   }
-                  movearr.push(document.getElementById((row-i)+'-'+(col-i)))
+                  values=getvalues(row-i,col-i); // get values of this cell
+               if (values.childplayer==='white') {
+                   break
+               }
+              movearr.push(document.getElementById((row-i)+'-'+(col-i)));
+              if (values.childplayer==='dark') {
+                break
+              }
                   }
                   for (let i = 1; i < 8; i++) {
-                    if (document.getElementById((row-i)+'-'+(col+i))===null) {
+                    if (document.getElementById((row-i)+'-'+(col+i))===null) {// one up one left
                       break
                     }
-                    movearr.push(document.getElementById((row-i)+'-'+(col+i)))
+                    values=getvalues(row-i,col+i); // get values of this cell
+               if (values.childplayer==='white') {
+                   break
+               }
+              movearr.push(document.getElementById((row-i)+'-'+(col+i)));
+              if (values.childplayer==='dark') {
+                break
+              }
                     }
-      
+                  
   
  return movearr;
-  
+                  }
+                  else{
+                    for (let i = 1; i < 8; i++) { //0-0
+        
+        
+                      if (document.getElementById((row)+'-'+(col-i))===null ) {//only left
+                        break
+                      }
+                      values=getvalues(row,col-i); // only left
+                        if (values.childplayer==='dark') {
+                          break
+                        }
+                  
+                      movearr.push(document.getElementById((row)+'-'+(col-i)))
+                      if (values.childplayer==='white') {
+                        break
+                      }
+                      }
+                      for (let i = 1; i < 8; i++) {
+                        if (document.getElementById((row+i)+'-'+(col))===null) { // only down
+                          break
+                        }
+                        values=getvalues(row+i,col);
+                        if (values.childplayer==='dark') {
+                          break
+                        }
+                        movearr.push(document.getElementById((row+i)+'-'+(col)))
+                        if (values.childplayer==='white') {
+                          break
+                        }
+                      }
+                        for (let i = 1; i < 8; i++) {
+                          if (document.getElementById((row)+'-'+(col+i))===null) {//only right
+                            break
+                          }
+                          values=getvalues(row,col+i);
+                        if (values.childplayer==='dark') {
+                          break
+                        }
+                          movearr.push(document.getElementById((row)+'-'+(col+i)))//0-1 0-2 0-3 0-4 0-5 0-6 0-7 
+                          if (values.childplayer==='white') {
+                            break
+                          }
+                        }
+                          for (let i = 1; i < 8; i++) {
+                            if (document.getElementById((row-i)+'-'+(col))===null) {//only up
+                              break
+                            }
+                            values=getvalues(row-i,col); // get values of this cell
+                        if (values.childplayer==='dark') {
+                          break
+                        }
+                           
+                            movearr.push(document.getElementById((row-i)+'-'+(col)));
+                            if (values.childplayer==='white') {
+                              break
+                            }
+                            }
+                  
+                  
+                                //bishop
+                                for (let i = 1; i < 8; i++) {
+                                  if (document.getElementById((row+i)+'-'+(col+i))===null) { //one right one down
+                                    break
+                                  }
+                                  values=getvalues(row+i,col+i); // get values of this cell
+                                 if (values.childplayer==='dark') {
+                                     break
+                                 }
+                                movearr.push(document.getElementById((row+i)+'-'+(col+i)));
+                                if (values.childplayer==='white') {
+                                  break
+                                }
+                                }
+                  
+                  
+                  
+                  
+                                for (let i = 1; i < 8; i++) {
+                                  if (document.getElementById((row+i)+'-'+(col-i))===null) { //one down one left
+                                    break
+                                  }
+                                  
+                                  values=getvalues(row+i,col-i); // get values of this cell
+                                 if (values.childplayer==='dark') {
+                                     break
+                                 }
+                                movearr.push(document.getElementById((row+i)+'-'+(col-i)));
+                                if (values.childplayer==='white') {
+                                  break
+                                }
+                                  } 
+                                  for (let i = 1; i < 8; i++) {
+                                    if (document.getElementById((row-i)+'-'+(col-i))===null) { // one up one right
+                                      break
+                                    }
+                                    values=getvalues(row-i,col-i); // get values of this cell
+                                 if (values.childplayer==='dark') {
+                                     break
+                                 }
+                                movearr.push(document.getElementById((row-i)+'-'+(col-i)));
+                                if (values.childplayer==='white') {
+                                  break
+                                }
+                                    }
+                                    for (let i = 1; i < 8; i++) {
+                                      if (document.getElementById((row-i)+'-'+(col+i))===null) {// one up one left
+                                        break
+                                      }
+                                      values=getvalues(row-i,col+i); // get values of this cell
+                                 if (values.childplayer==='dark') {
+                                     break
+                                 }
+                                movearr.push(document.getElementById((row-i)+'-'+(col+i)));
+                                if (values.childplayer==='white') {
+                                  break
+                                }
+                                      }
+                                      return movearr;
+                  }
  
       
 }
@@ -367,41 +624,129 @@ function queenmove(row ,col,name,player) {
 
 
 
+
+
 function rookmove(row ,col,name,player) {
   const movearr= []; //shows me possibilities of rook
- 
-  
-    
- 
+  let values ;
+
+   if (name==='rook'&&player==='white') {
+      for (let i = 1; i < 8; i++) { //0-0
+        
+        
+        if (document.getElementById((row)+'-'+(col-i))===null ) {//only left
+          break
+        }
+        values=getvalues(row,col-i); // only left
+          if (values.childplayer==='white') {
+            break
+          }
+
+        movearr.push(document.getElementById((row)+'-'+(col-i)))
+        if (values.childplayer==='dark') {
+          break
+        }
+        }
+        for (let i = 1; i < 8; i++) {
+          if (document.getElementById((row+i)+'-'+(col))===null ) { // only down
+            break
+          }
+          values=getvalues(row+i,col);
+          if (values.childplayer==='white') {
+            break
+          }
+          movearr.push(document.getElementById((row+i)+'-'+(col)))
+          if (values.childplayer==='dark') {
+            break
+          }
+        }
+          for (let i = 1; i < 8; i++) {
+            if (document.getElementById((row)+'-'+(col+i))===null) {//only right
+              break
+            }
+            values=getvalues(row,col+i);
+          if (values.childplayer==='white') {
+            break
+          }
+            movearr.push(document.getElementById((row)+'-'+(col+i)))//0-1 0-2 0-3 0-4 0-5 0-6 0-7 
+            if (values.childplayer==='dark') {
+              break
+            }
+          }
+            for (let i = 1; i < 8; i++) {
+              if (document.getElementById((row-i)+'-'+(col))===null) {//only up
+                break
+              }
+              values=getvalues(row-i,col);
+          if (values.childplayer==='white') {
+            break
+          }
+             
+              movearr.push(document.getElementById((row-i)+'-'+(col)))
+              if (values.childplayer==='dark') {
+                break
+              }
+              }
+
+    }
+ else{
       for (let i = 1; i < 8; i++) { //0-0
         if (document.getElementById((row)+'-'+(col-i))===null) {//only left
           break
         }
+        values=getvalues(row,col-i);
+          if (values.childplayer==='dark') {
+            break
+          }
         movearr.push(document.getElementById((row)+'-'+(col-i)))
+        if (values.childplayer==='white') {
+          break
+        }
         }
         for (let i = 1; i < 8; i++) {
           if (document.getElementById((row+i)+'-'+(col))===null) { // only down
             break
           }
+          values=getvalues(row+i,col);
+          if (values.childplayer==='dark') {
+            break
+          }
           movearr.push(document.getElementById((row+i)+'-'+(col)))
+          if (values.childplayer==='white') {
+            break
+          }
           }
           for (let i = 1; i < 8; i++) {
             if (document.getElementById((row)+'-'+(col+i))===null) {//only right
               break
             }
+            values=getvalues(row,col+i);
+          if (values.childplayer==='dark') {
+            break
+          }
             movearr.push(document.getElementById((row)+'-'+(col+i)))//0-1 0-2 0-3 0-4 0-5 0-6 0-7 
+            if (values.childplayer==='white') {
+              break
+            }
             }
             for (let i = 1; i < 8; i++) {
               if (document.getElementById((row-i)+'-'+(col))===null) {//only up
                 break
               }
+              values=getvalues(row-i,col);
+          if (values.childplayer==='dark') {
+            break
+          }
               movearr.push(document.getElementById((row-i)+'-'+(col)))
+              if (values.childplayer==='white') {
+                break
+              }
               }
 
               
           
       
-  
+            }
  return movearr;
   
  
@@ -413,73 +758,133 @@ function rookmove(row ,col,name,player) {
     const movearr= [];
    
     if (childname==='bishop') {
-      if (childplayer==='light') {
+      if (childplayer==='white') {
         
-      
-    
-    if (document.getElementById((row)+'-'+(col+3))=== null) {
+      //bishop
       for (let i = 1; i < 8; i++) {
-        if (document.getElementById((row+i)+'-'+(col+i))===null) {
+        if (document.getElementById((row+i)+'-'+(col+i))===null) { //one right one down
           break
         }
-      movearr.push(document.getElementById((row+i)+'-'+(col+i)))
+        values=getvalues(row+i,col+i); // get values of this cell
+       if (values.childplayer==='white') {
+           break
+       }
+      movearr.push(document.getElementById((row+i)+'-'+(col+i)));
+      if (values.childplayer==='dark') {
+        break
       }
-      for (let i = 1; i < 8; i++) {
-        if (document.getElementById((row+i)+'-'+(col-i))===null) {
-          break
-        }
-        movearr.push(document.getElementById((row+i)+'-'+(col-i)))
-        }
-    }
-    else if (document.getElementById((row)+'-'+(col-3))=== null){
-  
-      for (let i = 1; i < 8; i++) {
-        if (document.getElementById((row+i)+'-'+(col+i))===null) {
-          break
-        }
-      movearr.push(document.getElementById((row+i)+'-'+(col+i)))
       }
+
+
+
+
       for (let i = 1; i < 8; i++) {
-        if (document.getElementById((row+i)+'-'+(col-i))===null) {
+        if (document.getElementById((row+i)+'-'+(col-i))===null) { //one down one left
           break
         }
-        movearr.push(document.getElementById((row+i)+'-'+(col-i)))
-        }
-     }
-    }
-     else{
-      
-      for (let i = 1; i < 8; i++) {
-        if (document.getElementById((row+i)+'-'+(col+i))===null) {
-          break
-        }
-      movearr.push(document.getElementById((row+i)+'-'+(col+i)))
+        
+        values=getvalues(row+i,col-i); // get values of this cell
+       if (values.childplayer==='white') {
+           break
+       }
+      movearr.push(document.getElementById((row+i)+'-'+(col-i)));
+      if (values.childplayer==='dark') {
+        break
       }
-      for (let i = 1; i < 8; i++) {
-        if (document.getElementById((row+i)+'-'+(col-i))===null) {
-          break
-        }
-        movearr.push(document.getElementById((row+i)+'-'+(col-i)))
-        }
+        } 
         for (let i = 1; i < 8; i++) {
-          if (document.getElementById((row-i)+'-'+(col-i))===null) {
+          if (document.getElementById((row-i)+'-'+(col-i))===null) { // one up one right
             break
           }
-          movearr.push(document.getElementById((row-i)+'-'+(col-i)))
+          values=getvalues(row-i,col-i); // get values of this cell
+       if (values.childplayer==='white') {
+           break
+       }
+      movearr.push(document.getElementById((row-i)+'-'+(col-i)));
+      if (values.childplayer==='dark') {
+        break
+      }
           }
           for (let i = 1; i < 8; i++) {
-            if (document.getElementById((row-i)+'-'+(col+i))===null) {
+            if (document.getElementById((row-i)+'-'+(col+i))===null) {// one up one left
               break
             }
-            movearr.push(document.getElementById((row-i)+'-'+(col+i)))
+            values=getvalues(row-i,col+i); // get values of this cell
+       if (values.childplayer==='white') {
+           break
+       }
+      movearr.push(document.getElementById((row-i)+'-'+(col+i)));
+      if (values.childplayer==='dark') {
+        break
+      }
             }
+    }
+     else{//black
+      for (let i = 1; i < 8; i++) {
+        if (document.getElementById((row+i)+'-'+(col+i))===null) { //one right one down
+          break
+        }
+        values=getvalues(row+i,col+i); // get values of this cell
+       if (values.childplayer==='dark') {
+           break
+       }
+      movearr.push(document.getElementById((row+i)+'-'+(col+i)));
+      if (values.childplayer==='white') {
+        break
+      }
+      }
+
+
+
+
+      for (let i = 1; i < 8; i++) {
+        if (document.getElementById((row+i)+'-'+(col-i))===null) { //one down one left
+          break
+        }
+        
+        values=getvalues(row+i,col-i); // get values of this cell
+       if (values.childplayer==='dark') {
+           break
+       }
+      movearr.push(document.getElementById((row+i)+'-'+(col-i)));
+      if (values.childplayer==='white') {
+        break
+      }
+        } 
+        for (let i = 1; i < 8; i++) {
+          if (document.getElementById((row-i)+'-'+(col-i))===null) { // one up one right
+            break
+          }
+          values=getvalues(row-i,col-i); // get values of this cell
+       if (values.childplayer==='dark') {
+           break
+       }
+      movearr.push(document.getElementById((row-i)+'-'+(col-i)));
+      if (values.childplayer==='white') {
+        break
+      }
+          }
+          for (let i = 1; i < 8; i++) {
+            if (document.getElementById((row-i)+'-'+(col+i))===null) {// one up one left
+              break
+            }
+            values=getvalues(row-i,col+i); // get values of this cell
+       if (values.childplayer==='dark') {
+           break
+       }
+      movearr.push(document.getElementById((row-i)+'-'+(col+i)));
+      if (values.childplayer==='white') {
+        break
+      }
+}
+            
         
      }
      return movearr;
     }
+  }
     
     
-    }
   
   
 
