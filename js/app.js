@@ -7,6 +7,11 @@ const DARK_PLAYER = 'dark';
 
 let selectedCell;
 let pieces = [];
+let lastmove;
+let child =[];
+let savearr;
+let arr;
+const memory=[];
 
 class Piece {
   constructor(row, col, type, player) {
@@ -16,6 +21,9 @@ class Piece {
     this.player = player;
   }
 }
+
+
+
 function getvalues(row , col) {
   if (document.getElementById((row)+'-'+(col))!==null) { //in table territory
     
@@ -89,85 +97,130 @@ function addImageByIndex(cell, player, index) {
     addImage(cell, player, 'queen');
   }
 }
-let lastmove;
-let child =[];
-let savearr;
+
 function onCellClick(event) {
+  
   if (selectedCell !== undefined&&arr!==null) {
+    
+   
     if (lastmove===selectedCell ) {
       child.push(lastmove.firstChild);
-     }
+     
+      
+    }
      
     selectedCell.classList.remove('selected');
+    
+   
     for (const i of arr) {
       i.classList.remove('selectedoptions');
+    
+    
     }
-  }
+  
+}
+  
   selectedCell = event.currentTarget; //0-1
-
+  
+  
+  
   
   selectedCell.classList.add('selected');
   
   arr= moveSoliderOptions(selectedCell);//current possible moves
   
-  
   for (const i of arr) {
-   
-    console.log(i);
     i.classList.add('selectedoptions');
   }
+
   if(savearr!=undefined){
   for (const i of savearr) {
    if (selectedCell===i) {
     if (lastmove!==undefined) {
       selectedCell.append(child.pop([0]));
-       
      }
    }
-  
   }
+}
+if (selectedCell.firstChild!==undefined &&selectedCell.children.length>1) {
+  selectedCell.firstChild.remove('img');
 }
   savearr=arr;
 lastmove=selectedCell;
 
 
+
 }
 
 function moveSoliderOptions(event){ 
+  // let id = event.id;//0-0 id of cell
+  // let child = event.firstChild; // = img = #white-rook
+   let arr= [];
+  // let row = Number(id.split('-')[0]); // row = 0 (num) 
+  // let col = Number(id.split('-')[1]); // col = 0 (num)
+  // let childname =null; //rook queen 
+  // let childplayer =null; // dark or white
+  // if(child!==null){ //if empty cell
+  //   childname=child.id.split('-')[1]; //rook 
+  //  childplayer=child.id.split('-')[0]; // white
+  
+  // }
+  value =getvaluesbyid(event);
+  
+ 
+  if (value.childname==='queen') {
+    arr=queenmove(value.row,value.col,value.childname ,value.childplayer); //check valid moves of queen
+  }
+  if (value.childname==='king') {
+    arr=kingmove(value.row,value.col,value.childname ,value.childplayer); //check valid moves of king
+    
+  }
+  if (value.childname==='bishop') {
+    arr=bishopmove(value.row,value.col,value.childname ,value.childplayer);//check valid moves of bishop
+  }
+  if (value.childname==='knight') {
+    arr=knightmove(value.row,value.col,value.childname ,value.childplayer);//check valid moves of knight
+  }
+  if (value.childname==='rook') {
+    arr=rookmove(value.row,value.col,value.childname ,value.childplayer);//check valid moves of knight
+  }
+  if (value.childname==='pawn') {
+    arr=pawnsmove(value.row,value.col,value.childname ,value.childplayer);//check valid moves of pawns
+  }
+ 
+    
+  
+ return arr;
+
+}
+function getvaluesbyid(event) {
   let id = event.id;//0-0 id of cell
   let child = event.firstChild; // = img = #white-rook
   let arr= [];
   let row = Number(id.split('-')[0]); // row = 0 (num) 
-  let col = Number(id.split('-')[1]); // col = 0 (num)
-  let childname =null; //rook queen 
-  let childplayer =null; // dark or white
-  if(child!==null){ //if empty cell
-    childname=child.id.split('-')[1]; //rook 
-   childplayer=child.id.split('-')[0]; // white
-  console.log(row + "  " + col+ ' ' + childplayer + ' ' +childname);
-  }
- 
-  if (childname==='queen') {
-    arr=queenmove(row,col,childname ,childplayer); //check valid moves of queen
-  }
-  if (childname==='king') {
-    arr=kingmove(row,col,childname ,childplayer); //check valid moves of king
-  }
-  if (childname==='bishop') {
-    arr=bishopmove(row,col,childname ,childplayer);//check valid moves of bishop
-  }
-  if (childname==='knight') {
-    arr=knightmove(row,col,childname ,childplayer);//check valid moves of knight
-  }
-  if (childname==='rook') {
-    arr=rookmove(row,col,childname ,childplayer);//
-  }
-  if (childname==='pawn') {
-    arr=pawnsmove(row,col,childname ,childplayer);//check valid moves of pawns
-  }
- return arr;
-
+  let col = Number(id.split('-')[1]); 
+  let values =getvalues(row,col);
+  return values;
 }
+function check(arr){
+
+  let value;
+  if (arr!==undefined) {
+    
+  
+  for (const i of arr) {
+    value=getvaluesbyid(i);
+     if (value.childname==='king') {
+       return 1;
+     }
+    }
+  
+}
+return 0;
+}
+
+
+
 function kingmove(row ,col,name , player) {
   const movearr= [];
   let values;
@@ -398,26 +451,27 @@ function pawnsmove(row ,col,name , player) {
     
       
     values=getvalues(row+1,col+1);
-    if (document.getElementById((row+1)+'-'+(col+1))!==null&&values.childplayer!=='white'){
+    if (document.getElementById((row+1)+'-'+(col+1))!==null&&values.childplayer==='dark'){
   movearr.push(document.getElementById((row+1)+'-'+(col+1)))} // one left
   values=getvalues(row+1,col-1);
-    if (document.getElementById((row+1)+'-'+(col-1))!==null&&values.childplayer!=='white')
+    if (document.getElementById((row+1)+'-'+(col-1))!==null&&values.childplayer==='dark')
      {
       movearr.push(document.getElementById((row+1)+'-'+(col-1)))
     }// one right
    }
   else{
     values=getvalues(row+1,col);
-    if (values.childplayer!=='white' && document.getElementById((row+1)+'-'+col)!==null) {
+    if (values.childplayer!=='dark' && document.getElementById((row+1)+'-'+col)!==null) {
       movearr.push(document.getElementById((row+1)+'-'+col)); // one up
       }
-    if (document.getElementById((row+1)+'-'+(col+1))!==null&&values.childplayer!=='white'){
+      values=getvalues(row+1,col+1);
+    if (document.getElementById((row+1)+'-'+(col+1))!==null&&values.childplayer==='dark'){
 
     
     movearr.push(document.getElementById((row+1)+'-'+(col+1)))} // one left
     values=getvalues(row+1,col-1);
     
-    if (document.getElementById((row+1)+'-'+(col-1))!==null&&values.childplayer!=='white')
+    if (document.getElementById((row+1)+'-'+(col-1))!==null&&values.childplayer==='dark')
      {
       movearr.push(document.getElementById((row+1)+'-'+(col-1))) //one right
     }
@@ -439,10 +493,10 @@ function pawnsmove(row ,col,name , player) {
     
       
     values=getvalues(row-1,col+1);
-    if (document.getElementById((row-1)+'-'+(col+1))!==null&&values.childplayer!=='dark'){
+    if (document.getElementById((row-1)+'-'+(col+1))!==null&&values.childplayer==='white'){
   movearr.push(document.getElementById((row-1)+'-'+(col+1)))} // one right
   values=getvalues(row-1,col-1);
-    if (document.getElementById((row-1)+'-'+(col-1))!==null&&values.childplayer!=='dark')
+    if (document.getElementById((row-1)+'-'+(col-1))!==null&&values.childplayer==='white')
      {
       movearr.push(document.getElementById((row-1)+'-'+(col-1)));
     }// one left
@@ -454,15 +508,16 @@ else{
   if (values.childplayer!=='dark' && document.getElementById((row-1)+'-'+col)!==null) {
     movearr.push(document.getElementById((row-1)+'-'+col)); // one up
     }
-  if (document.getElementById((row-1)+'-'+(col+1))!==null&&values.childplayer!=='dark'){
+    values=getvalues(row-1,col+1);
+  if (document.getElementById((row-1)+'-'+(col+1))!==null&&values.childplayer==='white'){
 
   
-  movearr.push(document.getElementById((row-1)+'-'+(col+1)))} // one left
+  movearr.push(document.getElementById((row-1)+'-'+(col+1)))} // one right
   values=getvalues(row-1,col-1);
   
-  if (document.getElementById((row-1)+'-'+(col-1))!==null&&values.childplayer!=='dark')
+  if (document.getElementById((row-1)+'-'+(col-1))!==null&&values.childplayer==='white')
    {
-    movearr.push(document.getElementById((row-1)+'-'+(col-1))) //one right
+    movearr.push(document.getElementById((row-1)+'-'+(col-1))) //one left
   }
 }
     }
@@ -1024,5 +1079,6 @@ function createChessBoard() {
 }
 
 window.addEventListener('load', createChessBoard);
+
 
 
