@@ -19,7 +19,7 @@ class Piece {
 function getvalues(row , col) {
   if (document.getElementById((row)+'-'+(col))!==null) { //in table territory
     
- 
+  
   let event = document.getElementById((row)+'-'+(col));
   let id = event.id;//0-0 id of cell
   let child = event.firstChild; // = img = #white-rook
@@ -89,20 +89,47 @@ function addImageByIndex(cell, player, index) {
     addImage(cell, player, 'queen');
   }
 }
-
+let lastmove;
+let child =[];
+let savearr;
 function onCellClick(event) {
   if (selectedCell !== undefined&&arr!==null) {
+    if (lastmove===selectedCell ) {
+      child.push(lastmove.firstChild);
+     }
+     
     selectedCell.classList.remove('selected');
     for (const i of arr) {
       i.classList.remove('selectedoptions');
     }
   }
-  selectedCell = event.currentTarget;
+  selectedCell = event.currentTarget; //0-1
+
+  
   selectedCell.classList.add('selected');
+  
   arr= moveSoliderOptions(selectedCell);//current possible moves
+  
+  
   for (const i of arr) {
+   
+    console.log(i);
     i.classList.add('selectedoptions');
   }
+  if(savearr!=undefined){
+  for (const i of savearr) {
+   if (selectedCell===i) {
+    if (lastmove!==undefined) {
+      selectedCell.append(child.pop([0]));
+       
+     }
+   }
+  
+  }
+}
+  savearr=arr;
+lastmove=selectedCell;
+
 
 }
 
@@ -248,47 +275,101 @@ function kingmove(row ,col,name , player) {
 function knightmove(row ,col,name , player) {
   const movearr= [];
  let  a = true;
-  if (name==='knight') {
+ let values;
+  if (name==='knight' &&player ==='white') {
   
-   
-    if (document.getElementById((row+2)+'-'+(col+1))!==null){
+   values = getvalues(row+2,col+1);
+    if (document.getElementById((row+2)+'-'+(col+1))!==null &&values.childplayer!=='white'){
 
     
     movearr.push(document.getElementById((row+2)+'-'+(col+1)))} // one left two up
-    if (document.getElementById((row+2)+'-'+(col-1))!==null)
+    values = getvalues(row+2,col-1);
+    if (document.getElementById((row+2)+'-'+(col-1))!==null&&values.childplayer!=='white')
      {
       movearr.push(document.getElementById((row+2)+'-'+(col-1))) //one right two up
     }
-    if (document.getElementById((row-2)+'-'+(col-1))!==null){
+    values = getvalues(row-2,col-1);
+    if (document.getElementById((row-2)+'-'+(col-1))!==null&&values.childplayer!=='white'){
 
     
       movearr.push(document.getElementById((row-2)+'-'+(col-1)))} // one left two down
-      if (document.getElementById((row-2)+'-'+(col+1))!==null)
+      values = getvalues(row-2,col+1);
+      if (document.getElementById((row-2)+'-'+(col+1))!==null&&values.childplayer!=='white')
        {
         movearr.push(document.getElementById((row-2)+'-'+(col+1))) //one right two down
       }
-      if (document.getElementById((row+1)+'-'+(col-2))!==null){
+      values = getvalues(row+1,col-2);
+      if (document.getElementById((row+1)+'-'+(col-2))!==null&&values.childplayer!=='white'){
 
     
         movearr.push(document.getElementById((row+1)+'-'+(col-2)))} //two left one down
-        if (document.getElementById((row-1)+'-'+(col+2))!==null)
+        values = getvalues(row-1,col+2);
+        if (document.getElementById((row-1)+'-'+(col+2))!==null&&values.childplayer!=='white')
          {
           movearr.push(document.getElementById((row-1)+'-'+(col+2))) //two right one down
         }
-        if (document.getElementById((row+1)+'-'+(col+2))!==null){
+        values = getvalues(row+1,col+2);
+        if (document.getElementById((row+1)+'-'+(col+2))!==null&&values.childplayer!=='white'){
 
     
           movearr.push(document.getElementById((row+1)+'-'+(col+2)))} //two right one up
-
-          if (document.getElementById((row-1)+'-'+(col-2))!==null)
+          values = getvalues(row-1,col-2);
+          if (document.getElementById((row-1)+'-'+(col-2))!==null&&values.childplayer!=='white')
            {
             movearr.push(document.getElementById((row-1)+'-'+(col-2))) //two left one down
           }
-  
+          
   
           return movearr;
-}
-  
+
+        }
+        else{
+          
+   values = getvalues(row+2,col+1);
+   if (document.getElementById((row+2)+'-'+(col+1))!==null &&values.childplayer!=='dark'){
+
+   
+   movearr.push(document.getElementById((row+2)+'-'+(col+1)))} // one left two up
+   values = getvalues(row+2,col-1);
+   if (document.getElementById((row+2)+'-'+(col-1))!==null&&values.childplayer!=='dark')
+    {
+     movearr.push(document.getElementById((row+2)+'-'+(col-1))) //one right two up
+   }
+   values = getvalues(row-2,col-1);
+   if (document.getElementById((row-2)+'-'+(col-1))!==null&&values.childplayer!=='dark'){
+
+   
+     movearr.push(document.getElementById((row-2)+'-'+(col-1)))} // one left two down
+     values = getvalues(row-2,col+1);
+     if (document.getElementById((row-2)+'-'+(col+1))!==null&&values.childplayer!=='dark')
+      {
+       movearr.push(document.getElementById((row-2)+'-'+(col+1))) //one right two down
+     }
+     values = getvalues(row+1,col-2);
+     if (document.getElementById((row+1)+'-'+(col-2))!==null&&values.childplayer!=='dark'){
+
+   
+       movearr.push(document.getElementById((row+1)+'-'+(col-2)))} //two left one down
+       values = getvalues(row-1,col+2);
+       if (document.getElementById((row-1)+'-'+(col+2))!==null&&values.childplayer!=='dark')
+        {
+         movearr.push(document.getElementById((row-1)+'-'+(col+2))) //two right one down
+       }
+       values = getvalues(row+1,col+2);
+       if (document.getElementById((row+1)+'-'+(col+2))!==null&&values.childplayer!=='dark'){
+
+   
+         movearr.push(document.getElementById((row+1)+'-'+(col+2)))} //two right one up
+         values = getvalues(row-1,col-2);
+         if (document.getElementById((row-1)+'-'+(col-2))!==null&&values.childplayer!=='dark')
+          {
+           movearr.push(document.getElementById((row-1)+'-'+(col-2))) //two left one down
+         }
+         
+ 
+         return movearr;
+
+        }
   
   
 }
@@ -296,6 +377,8 @@ function knightmove(row ,col,name , player) {
 function pawnsmove(row ,col,name , player) {
   const movearr= [];
  let  a = true;
+ let values;
+ let values2;
   if (name==='pawn') {
     
   
@@ -303,26 +386,38 @@ function pawnsmove(row ,col,name , player) {
     
   
   if (row ===1) { //start
-    movearr.push(document.getElementById((row+1)+'-'+col)); // one up
+    values=getvalues(row+1,col);
+    if (values.childplayer!=='white') {
+      movearr.push(document.getElementById((row+1)+'-'+col)); // one up
+      }
+    values=getvalues(row+2,col);
+    if (values.childplayer!=='white') {
     movearr.push(document.getElementById((row+2)+'-'+col)); // two up
+    }
+    
     
       
-    
-    if (document.getElementById((row+1)+'-'+(col+1))!==null){
-
-    
-    movearr.push(document.getElementById((row+1)+'-'+(col+1)))} // one left
-    if (document.getElementById((row+1)+'-'+(col-1))!==null)
+    values=getvalues(row+1,col+1);
+    if (document.getElementById((row+1)+'-'+(col+1))!==null&&values.childplayer!=='white'){
+  movearr.push(document.getElementById((row+1)+'-'+(col+1)))} // one left
+  values=getvalues(row+1,col-1);
+    if (document.getElementById((row+1)+'-'+(col-1))!==null&&values.childplayer!=='white')
      {
       movearr.push(document.getElementById((row+1)+'-'+(col-1)))
     }// one right
    }
-  else{ movearr.push(document.getElementById((row+1)+'-'+col)); // one up
-    if (document.getElementById((row+1)+'-'+(col+1))!==null){
+  else{
+    values=getvalues(row+1,col);
+    if (values.childplayer!=='white' && document.getElementById((row+1)+'-'+col)!==null) {
+      movearr.push(document.getElementById((row+1)+'-'+col)); // one up
+      }
+    if (document.getElementById((row+1)+'-'+(col+1))!==null&&values.childplayer!=='white'){
 
     
     movearr.push(document.getElementById((row+1)+'-'+(col+1)))} // one left
-    if (document.getElementById((row+1)+'-'+(col-1))!==null)
+    values=getvalues(row+1,col-1);
+    
+    if (document.getElementById((row+1)+'-'+(col-1))!==null&&values.childplayer!=='white')
      {
       movearr.push(document.getElementById((row+1)+'-'+(col-1))) //one right
     }
@@ -332,31 +427,43 @@ function pawnsmove(row ,col,name , player) {
     
   
     if (row ===6) { //start
-      movearr.push(document.getElementById((row-1)+'-'+col)); // one down
-      movearr.push(document.getElementById((row-2)+'-'+col)); // two down
+      values=getvalues(row-1,col);
+    if (values.childplayer!=='dark') {
+      movearr.push(document.getElementById((row-1)+'-'+col)); // one up
+      }
+       values=getvalues(row-2,col);
+       if (values.childplayer!=='dark') {
+      movearr.push(document.getElementById((row-2)+'-'+col)); // two up
+       }
+    
+    
       
-        
-      
-      if (document.getElementById((row-1)+'-'+(col+1))!==null){
-  
-      
-      movearr.push(document.getElementById((row-1)+'-'+(col+1)))} // one left
-      if (document.getElementById((row-1)+'-'+(col-1))!==null)
-       {
-        movearr.push(document.getElementById((row-1)+'-'+(col-1)))
-      }// one right
+    values=getvalues(row-1,col+1);
+    if (document.getElementById((row-1)+'-'+(col+1))!==null&&values.childplayer!=='dark'){
+  movearr.push(document.getElementById((row-1)+'-'+(col+1)))} // one right
+  values=getvalues(row-1,col-1);
+    if (document.getElementById((row-1)+'-'+(col-1))!==null&&values.childplayer!=='dark')
+     {
+      movearr.push(document.getElementById((row-1)+'-'+(col-1)));
+    }// one left
      }
     
      
-else{ movearr.push(document.getElementById((row-1)+'-'+col)); // one down
-if (document.getElementById((row-1)+'-'+(col+1))!==null){
+else{
+  values=getvalues(row-1,col);
+  if (values.childplayer!=='dark' && document.getElementById((row-1)+'-'+col)!==null) {
+    movearr.push(document.getElementById((row-1)+'-'+col)); // one up
+    }
+  if (document.getElementById((row-1)+'-'+(col+1))!==null&&values.childplayer!=='dark'){
 
-
-movearr.push(document.getElementById((row-1)+'-'+(col+1)))} // one left
-if (document.getElementById((row-1)+'-'+(col-1))!==null)
- {
-  movearr.push(document.getElementById((row-1)+'-'+(col-1))) //one right
-}
+  
+  movearr.push(document.getElementById((row-1)+'-'+(col+1)))} // one left
+  values=getvalues(row-1,col-1);
+  
+  if (document.getElementById((row-1)+'-'+(col-1))!==null&&values.childplayer!=='dark')
+   {
+    movearr.push(document.getElementById((row-1)+'-'+(col-1))) //one right
+  }
 }
     }
     return movearr;
