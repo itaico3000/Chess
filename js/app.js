@@ -159,7 +159,7 @@ function onCellClick(event) {
 
   if(savearr!=undefined){
   for (const i of savearr) {
-   if (selectedCell===i) {
+   if (selectedCell===i) { //if i(possiblemove of last move) is in 
     if (lastmove!==undefined) {
       selectedCell.append(child.pop([0]));
      }
