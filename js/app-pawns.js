@@ -337,15 +337,16 @@ class BoardData {
   }
   changeLocation(row, col, lastrow, lastcol, lastype, lastplayer) {
     let remove = this.getPiece(lastrow, lastcol);
-    // if (lastplayer===undefined&&lastype===undefined) {
-    //   this.pieces.push(new Piece(row, col, this.pieces[this.pieces.length].type, this.pieces[this.pieces.length].player));
-    // }
-    // else{
+  
     this.pieces.push(new Piece(row, col, lastype, lastplayer));
-    //}
+    
     this.pieces.splice(this.pieces.indexOf(remove), 1);
-    console.log(this.pieces);
+   console.log(this.pieces);
   }
+eat(){
+  this.pieces.splice(this.pieces.length-2, 1);
+}
+
 }
 
 function getInitialPieces() {
@@ -395,12 +396,16 @@ function onCellClick(event, row, col) {
   if (selectedCell !== undefined && lastcell !== undefined) {
     if (lastcell === selectedCell) {
       child.push(lastcell.firstChild);
+      console.log('this is child ' , child);
+
     }
   }
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
       table.rows[i].cells[j].classList.remove("selected");
       table.rows[i].cells[j].classList.remove("selectedoptions");
+      
+
     }
   }
   const piece = boardData.getPiece(row, col); //[0,0]
@@ -410,7 +415,6 @@ function onCellClick(event, row, col) {
 
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
-      console.log(table.rows[possibleMove[0]].cells[possibleMove[1]]);
       cell.classList.add("selectedoptions");
     }
   }
@@ -421,57 +425,57 @@ function onCellClick(event, row, col) {
   // Show selected cell
   selectedCell = event.currentTarget;
   selectedCell.classList.add("selected");
-
   // let savedPiece =piece;
   // let  savedPossibleMoves= possibleMoves;
-  if (savedPossibleMoves !== undefined && savedPiece !== undefined) {
-    for (const i of savedPossibleMoves) {
-      let t = boardData.getPiece(i[0], i[1]);
-      for (const k of possibleMoves) {
-        if (k !== undefined && k === i && k[0] === row && k[1] === col) {
-          //  if (lastcell!==undefined) {
-          console.log(
-            "this is savePossiblity ",
-            i,
-            "this is the current possiblity ",
-            k
-          );
-          console.log("this is last row ", row);
-          console.log("this is last col ", col);
-
-          if (child.length > 0) {
-            const cell = table.rows[k[0]].cells[k[1]].append(child.pop());
-            boardData.changeLocation(
-              k[0],
-              k[1],
-              savedPiece.row,
-              savedPiece.col,
-              savedPiece.type,
-              savedPiece.player
-            );
-            console.log(child, "this is child");
-          }
-
-          // const cell = table.rows[k[0]].cells[k[1]].append(child.pop([0]));
-          // boardData.changeLocation(k[0], k[1], savedPiece.row, savedPiece.col,savedPiece.type,savedPiece.player);
-
-          //break
-          //   }
-        }
-      }
-    }
-
-    //  selectedCell.append(child.pop([0]));
+  if (savedPossibleMoves !== undefined ) {
+   console.log('hi1');
+   
+   move(savedPossibleMoves,possibleMoves,row,col);
+   if (selectedCell.firstChild!==undefined &&selectedCell.children.length>1) {
+    boardData.eat();
+    selectedCell.firstChild.remove('img');
+  }
+   
   }
   if (piece !== undefined && possibleMoves !== undefined) {
     savedPiece = piece;
     savedPossibleMoves = possibleMoves;
   }
+  
   lastrow = row;
   lastcol = col;
   lastcell = selectedCell;
+  
+  child=[];
 }
+function move(savedPossibleMoves,possibleMoves,row,col) {
+  for (const i of savedPossibleMoves) {
+      console.log('hi2');
+   // for (const k of possibleMoves) {
+      console.log('this is i ', i);
+      if (i !== undefined && i[0] === row && i[1] === col) {
+        //  if (lastcell!==undefined) {
+      
+        console.log("this is last row ", row);
+        console.log("this is last col ", col);
 
+        if (child.length > 0) {
+          const cell = table.rows[i[0]].cells[i[1]].append(child.pop());
+          boardData.changeLocation(
+            i[0],
+            i[1],
+            savedPiece.row,
+            savedPiece.col,
+            savedPiece.type,
+            savedPiece.player
+          );
+         
+        }
+}
+    //}
+  }
+ 
+  }
 function createChessBoard() {
   // Create empty chess board HTML:
   table = document.createElement("table");
