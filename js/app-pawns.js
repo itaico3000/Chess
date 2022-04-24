@@ -328,23 +328,30 @@ class BoardData {
   }
 
   // Returns piece in row, col, or undefined if not exists.
-  getPiece(row, col) {
+  getPiece(row, col ) {
     for (const piece of this.pieces) {
-      if (row === piece.row && col === piece.col) {
+      if (row === piece.row && col === piece.col ) {
         return piece;
       }
     }
   }
   changeLocation(row, col, lastrow, lastcol, lastype, lastplayer) {
     let remove = this.getPiece(lastrow, lastcol);
-  
+    console.log('this is remove ', remove);
     this.pieces.push(new Piece(row, col, lastype, lastplayer));
     
     this.pieces.splice(this.pieces.indexOf(remove), 1);
    console.log(this.pieces);
   }
-eat(){
-  this.pieces.splice(this.pieces.length-2, 1);
+eat(type ,player){
+ for (let i = 0; i < this.pieces.length; i++) {
+  if (type === this.pieces[i].type && player === this.pieces[i].player ) {
+    this.pieces.splice(this.pieces.indexOf(this.pieces[i]), 1);
+    i--;
+  }
+ }
+ 
+  
 }
 
 }
@@ -408,7 +415,9 @@ function onCellClick(event, row, col) {
 
     }
   }
-  const piece = boardData.getPiece(row, col); //[0,0]
+  const piece = boardData.getPiece(row, col); 
+  console.log('this is piece ' ,piece);
+
   //console.log(piece);
   if (piece !== undefined) {
     possibleMoves = piece.getPossibleMoves();
@@ -428,11 +437,10 @@ function onCellClick(event, row, col) {
   // let savedPiece =piece;
   // let  savedPossibleMoves= possibleMoves;
   if (savedPossibleMoves !== undefined ) {
-   console.log('hi1');
    
    move(savedPossibleMoves,possibleMoves,row,col);
-   if (selectedCell.firstChild!==undefined &&selectedCell.children.length>1) {
-    boardData.eat();
+   if (selectedCell.firstChild!==undefined &&selectedCell.children.length>1 &&piece!==undefined) {
+    boardData.eat(piece.type,piece.player)
     selectedCell.firstChild.remove('img');
   }
    
@@ -450,15 +458,11 @@ function onCellClick(event, row, col) {
 }
 function move(savedPossibleMoves,possibleMoves,row,col) {
   for (const i of savedPossibleMoves) {
-      console.log('hi2');
    // for (const k of possibleMoves) {
-      console.log('this is i ', i);
       if (i !== undefined && i[0] === row && i[1] === col) {
         //  if (lastcell!==undefined) {
       
-        console.log("this is last row ", row);
-        console.log("this is last col ", col);
-
+        
         if (child.length > 0) {
           const cell = table.rows[i[0]].cells[i[1]].append(child.pop());
           boardData.changeLocation(
