@@ -21,14 +21,12 @@ let savedPossibleMoves;
 let lastcell;
 let ttt;
 let child = [];
-let up = 0;
-let down = 0;
-let right = 0;
-let left = 0;
+let lastrow;
+let lastcol;
 let lastData;
 let save = 0;
 let final = [];
-a = true;
+a = false;
 
 class Piece {
   constructor(row, col, type, player) {
@@ -72,12 +70,12 @@ class Piece {
       let absoluteCol = this.col + relativeMove[1];
 
       let checkData = boardData.getPiece(this.row, this.col);
-      if (lastData !== checkData) {
-        up = 0;
-        down = 0;
-        right = 0;
-        left = 0;
-      }
+      // if (lastData !== checkData) {
+      //   up = 0;
+      //   down = 0;
+      //   right = 0;
+      //   left = 0;
+      // }
 
       absoluteMoves.push([absoluteRow, absoluteCol]);
 
@@ -337,17 +335,16 @@ class BoardData {
       }
     }
   }
-  changeLocation(row, col, lastrow, lastcol ,lastype,lastplayer) {
-   
+  changeLocation(row, col, lastrow, lastcol, lastype, lastplayer) {
     let remove = this.getPiece(lastrow, lastcol);
-    if (lastplayer===undefined&&lastype===undefined) {
-      this.pieces.push(new Piece(row, col, this.pieces[this.pieces.length].type, this.pieces[this.pieces.length].player));
-    }
-    else{
+    // if (lastplayer===undefined&&lastype===undefined) {
+    //   this.pieces.push(new Piece(row, col, this.pieces[this.pieces.length].type, this.pieces[this.pieces.length].player));
+    // }
+    // else{
     this.pieces.push(new Piece(row, col, lastype, lastplayer));
-  }
-  this.pieces.splice(this.pieces.indexOf(remove), 1);
-   console.log(this.pieces);
+    //}
+    this.pieces.splice(this.pieces.indexOf(remove), 1);
+    console.log(this.pieces);
   }
 }
 
@@ -383,16 +380,12 @@ function addFirstRowPieces(result, row, player) {
 }
 
 function addImage(cell, player, name) {
-  if (player===undefined) {
-    
-  } 
-  else{
-
-  
-  const image = document.createElement("img");
-  image.src = "images/" + player + "/" + name + ".png";
-  image.id = player + "-" + name;
-  cell.appendChild(image);
+  if (player === undefined) {
+  } else {
+    const image = document.createElement("img");
+    image.src = "images/" + player + "/" + name + ".png";
+    image.id = player + "-" + name;
+    cell.appendChild(image);
   }
 }
 
@@ -432,12 +425,10 @@ function onCellClick(event, row, col) {
   // let savedPiece =piece;
   // let  savedPossibleMoves= possibleMoves;
   if (savedPossibleMoves !== undefined && savedPiece !== undefined) {
-    console.log("hi");
-
     for (const i of savedPossibleMoves) {
       let t = boardData.getPiece(i[0], i[1]);
       for (const k of possibleMoves) {
-        if (k !== undefined && k === i) {
+        if (k !== undefined && k === i && k[0] === row && k[1] === col) {
           //  if (lastcell!==undefined) {
           console.log(
             "this is savePossiblity ",
@@ -445,13 +436,28 @@ function onCellClick(event, row, col) {
             "this is the current possiblity ",
             k
           );
-          const cell = table.rows[k[0]].cells[k[1]].append(child.pop([0]));
-          boardData.changeLocation(k[0], k[1], savedPiece.row, savedPiece.col,savedPiece.type,savedPiece.player);
-         
-            //break
+          console.log("this is last row ", row);
+          console.log("this is last col ", col);
+
+          if (child.length > 0) {
+            const cell = table.rows[k[0]].cells[k[1]].append(child.pop());
+            boardData.changeLocation(
+              k[0],
+              k[1],
+              savedPiece.row,
+              savedPiece.col,
+              savedPiece.type,
+              savedPiece.player
+            );
+            console.log(child, "this is child");
+          }
+
+          // const cell = table.rows[k[0]].cells[k[1]].append(child.pop([0]));
+          // boardData.changeLocation(k[0], k[1], savedPiece.row, savedPiece.col,savedPiece.type,savedPiece.player);
+
+          //break
           //   }
         }
-        
       }
     }
 
@@ -461,7 +467,8 @@ function onCellClick(event, row, col) {
     savedPiece = piece;
     savedPossibleMoves = possibleMoves;
   }
-
+  lastrow = row;
+  lastcol = col;
   lastcell = selectedCell;
 }
 
