@@ -23,9 +23,9 @@ let lastrow;
 let lastcol;
 let lastData;
 let turn = 0;
+let lastTurn;
 let save = 0;
 let final = [];
-a = 0;
 
 class Piece {
   constructor(row, col, type, player) {
@@ -120,7 +120,6 @@ class Piece {
 
       lastData = boardData.getPiece(this.row, this.col);
     }
-    console.log("absoluteMoves", absoluteMoves);
 
     // Get filtered absolute moves
     let filteredMoves = [];
@@ -139,84 +138,136 @@ class Piece {
       }
     }
 
-    console.log("filteredMoves", filteredMoves);
     return filteredMoves;
     //return filteredMoves;
   }
 
   getPawnWRelativeMoves() {
-    //pawn white
-    // TODO: Give different answer to black player
     let result = [];
+    let a = 0;
     result.push([1, 0]);
-
-    for (let i = 0; i < result.length; i++) {
+    a++;
+    let currentPiece = boardData.getPiece(
+      this.row + result[0][0],
+      this.col + result[0][1]
+    );
+    if (currentPiece !== undefined) {
+      result.pop();
+      a--;
+    }
+    if (this.row === 1) {
+      result.push([2, 0]);
       let currentPiece = boardData.getPiece(
-        this.row + result[i][0],
-        this.col + result[i][1]
+        this.row + result[a][0],
+        this.col + result[a][1]
       );
-      if (currentPiece !== undefined) {
-        result.splice(i, 1);
-
-        a = i;
+      if (currentPiece !== undefined || a === 0) {
+        result.pop();
+        a--;
       }
     }
-    console.log("this is result ", result);
+    if (a === -1) {
+      a++;
+    }
     result.push([1, 1]);
-    result.push([1, -1]);
-    for (let i = a + 1; i < result.length; i++) {
-      let currentPiece = boardData.getPiece(
-        this.row + result[i][0],
-        this.col + result[i][1]
-      );
 
-      if (currentPiece !== undefined && currentPiece.player === WHITE_PLAYER) {
-        result.splice(i, 1);
-        i--;
-      } else if (currentPiece === undefined) {
-        result.splice(i, 1);
-        i--;
-      }
+    if (result !== undefined) {
+      currentPiece = boardData.getPiece(
+        this.row + result[a][0],
+        this.col + result[a][1]
+      );
+    }
+
+    if (currentPiece !== undefined && currentPiece.player === WHITE_PLAYER) {
+      result.pop();
+      a--;
+    } else if (currentPiece === undefined) {
+      result.pop();
+      a--;
+    }
+
+    result.push([1, -1]);
+    a++;
+    if (result !== undefined) {
+      currentPiece = boardData.getPiece(
+        this.row + result[a][0],
+        this.col + result[a][1]
+      );
+    }
+
+    if (currentPiece !== undefined && currentPiece.player === WHITE_PLAYER) {
+      result.pop();
+      a--;
+    } else if (currentPiece === undefined) {
+      result.pop();
+      a--;
     }
 
     return result;
   }
   getPawnBRelativeMoves() {
-    // TODO: Give different answer to black player
     let result = [];
+    let a = 0;
     result.push([-1, 0]);
-
-    for (let i = 0; i < result.length; i++) {
+    a++;
+    let currentPiece = boardData.getPiece(
+      this.row + result[0][0],
+      this.col + result[0][1]
+    );
+    if (currentPiece !== undefined) {
+      result.pop();
+      a--;
+    }
+    if (this.row === 6) {
+      result.push([-2, 0]);
       let currentPiece = boardData.getPiece(
-        this.row + result[i][0],
-        this.col + result[i][1]
+        this.row + result[a][0],
+        this.col + result[a][1]
       );
-      if (currentPiece !== undefined) {
-        result.splice(i, 1);
-
-        a = i;
+      if (currentPiece !== undefined || a === 0) {
+        result.pop();
+        a--;
       }
     }
-    console.log("this is result ", result);
+    if (a === -1) {
+      a++;
+    }
     result.push([-1, 1]);
-    result.push([-1, -1]);
-    for (let i = a + 1; i < result.length; i++) {
-      let currentPiece = boardData.getPiece(
-        this.row + result[i][0],
-        this.col + result[i][1]
-      );
 
-      if (currentPiece !== undefined && currentPiece.player === BLACK_PLAYER) {
-        result.splice(i, 1);
-        i--;
-      } else if (currentPiece === undefined) {
-        result.splice(i, 1);
-        i--;
-      }
+    if (result !== undefined) {
+      currentPiece = boardData.getPiece(
+        this.row + result[a][0],
+        this.col + result[a][1]
+      );
+    }
+
+    if (currentPiece !== undefined && currentPiece.player === BLACK_PLAYER) {
+      result.pop();
+      a--;
+    } else if (currentPiece === undefined) {
+      result.pop();
+      a--;
+    }
+    result.push([-1, -1]);
+    a++;
+    if (result !== undefined) {
+      currentPiece = boardData.getPiece(
+        this.row + result[a][0],
+        this.col + result[a][1]
+      );
+    }
+
+    if (currentPiece !== undefined && currentPiece.player === BLACK_PLAYER) {
+      result.pop();
+      a--;
+    } else if (currentPiece === undefined) {
+      result.pop();
+      a--;
     }
 
     return result;
   }
+
   getWhiteKnightRelativeMoves() {
     let result = [];
 
@@ -262,7 +313,7 @@ class Piece {
         i--;
       }
     }
-    console.log("this is result ", result);
+
     return result;
   }
   getWhiteKingRelativeMoves() {
@@ -330,7 +381,7 @@ class Piece {
       result = result.concat(blackArrow(this, 0, -1));
     }
     //}
-    console.log("this is result ", result);
+
     return result;
   }
   getBishopRelativeMoves() {
@@ -438,16 +489,34 @@ class BoardData {
       }
     }
   }
+  removePiece(type, player) {
+    let a = boardData.getpiecebytype(type, player);
+    for (const i of this.pieces) {
+      if (a === i) {
+        this.pieces.splice(this.pieces.indexOf(i), 1);
+      }
+    }
+  }
+  removeDuplicates() {
+    for (let i = 0; i < this.pieces.length; i++) {
+      const element = this.pieces[i];
+      for (let j = 0; j < this.pieces.length; j++) {
+        const element2 = this.pieces[j];
+        if (element === element2) {
+          this.removePiece(element2);
+        }
+      }
+    }
+  }
+
   changeLocation(row, col, lastrow, lastcol, lastype, lastplayer) {
     let remove = this.getPiece(lastrow, lastcol);
-    console.log("this is remove ", remove);
     if (remove) {
     }
     this.pieces.push(new Piece(row, col, lastype, lastplayer));
 
     this.pieces.splice(this.pieces.indexOf(remove), 1);
 
-    console.log(this.pieces);
     return remove;
   }
   eat(type, player, row, col) {
@@ -512,27 +581,25 @@ function addImage(cell, player, name) {
     cell.appendChild(image);
   }
 }
-
-function onCellClick(event, row, col) {
-  // Clear all previous possible moves
-
-  if (checkIfchecked()) {
-    alert("check! protect your king");
-  }
-  if (selectedCell !== undefined && lastcell !== undefined) {
-    if (lastcell === selectedCell) {
-      child.push(lastcell.firstChild);
-    }
-  }
+function removeCellClasses() {
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
       table.rows[i].cells[j].classList.remove("selected");
       table.rows[i].cells[j].classList.remove("selectedoptions");
+      table.rows[i].cells[j].classList.remove("attack");
+      table.rows[i].cells[j].classList.remove("protect");
+
+      if (table.rows[i].cells[j].firstChild === null) {
+        let remove = boardData.getPiece(i, j);
+        if (remove !== undefined) {
+          boardData.removePiece(remove.type, remove.player);
+          boardData.removeDuplicates();
+        }
+      }
     }
   }
-  let piece = boardData.getPiece(row, col);
-  console.log("this is piece ", piece);
-
+}
+function addPossibleOptions(piece, possibleMoves, turn) {
   if (piece !== undefined && turn % 2 == 0 && piece.player === WHITE_PLAYER) {
     possibleMoves = piece.getPossibleMoves();
 
@@ -552,31 +619,73 @@ function onCellClick(event, row, col) {
       cell.classList.add("selectedoptions");
     }
   }
+  return possibleMoves;
+}
+function onCellClick(event, row, col) {
+  // Clear all previous possible moves
+
+  if (selectedCell !== undefined && lastcell !== undefined) {
+    if (lastcell === selectedCell) {
+      child.push(lastcell.firstChild);
+    }
+  }
+  removeCellClasses();
+  let piece = boardData.getPiece(row, col);
+  console.log("this is piece ", piece);
+  possibleMoves = addPossibleOptions(piece, possibleMoves, turn);
 
   if (selectedCell !== undefined) {
     selectedCell.classList.remove("selected");
   }
 
   // Show selected cell
+
   selectedCell = event.currentTarget;
+
+  if (selectedCell === lastcell) {
+    turn = lastTurn;
+  }
+
   selectedCell.classList.add("selected");
   // let savedPiece =piece;
   // let  savedPossibleMoves= possibleMoves;
   if (savedPossibleMoves !== undefined) {
     turn += move(savedPossibleMoves, possibleMoves, row, col);
-    console.log("this is turn ", turn);
 
     if (
       selectedCell.firstChild !== undefined &&
       selectedCell.children.length > 1 &&
       piece !== undefined
     ) {
-      boardData.eat(piece.type, piece.player, lastrow, lastcol);
+      boardData.eat(piece.type, piece.player, row, col);
       selectedCell.firstChild.remove("img");
       piece.player = savedPiece.player;
       piece.type = savedPiece.type;
     }
+
+    lastcell = selectedCell;
+
+    if (turn > lastTurn) {
+      selectedCell = undefined;
+      if (turn % 2 == 0) {
+        let h2 = document.querySelector("h2");
+        h2.innerText = "this is white turn";
+      } else {
+        let h2 = document.querySelector("h2");
+        h2.innerText = "this is black turn";
+      }
+      if (checkIfchecked()) {
+        alert("check! protect your king first time");
+
+        if (!checkWhoCanEat(attack())) {
+          if (ifKingCanMove()) {
+            alert("checkMate !!!!!!!!!!!!!!!!!!");
+          }
+        }
+      }
+    }
   }
+
   if (piece !== undefined && possibleMoves !== undefined) {
     savedPiece = piece;
     savedPossibleMoves = possibleMoves;
@@ -585,6 +694,7 @@ function onCellClick(event, row, col) {
   lastrow = row;
   lastcol = col;
   lastcell = selectedCell;
+  lastTurn = turn;
 
   child = [];
 }
@@ -605,6 +715,7 @@ function move(savedPossibleMoves, possibleMoves, row, col) {
           savedPiece.type,
           savedPiece.player
         );
+
         turn = 1;
       }
     }
@@ -627,12 +738,12 @@ function checkIfchecked() {
     if (attacker !== undefined && attacker.player === BLACK_PLAYER) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       attack = attacker.getPossibleMoves();
-
       console.log("this is attack !", attack);
       for (const possibleMov of attack) {
         let attackCheck = boardData.getPiece(possibleMov[0], possibleMov[1]);
         console.log(attackCheck);
         if (attackCheck !== undefined && attackCheck.type === KING) {
+          cell.classList.add("attack");
           return true;
         }
       }
@@ -647,18 +758,94 @@ function checkIfchecked() {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       attack = attacker.getPossibleMoves();
 
-      console.log("this is attack !", attack);
       for (const possibleMov of attack) {
         let attackCheck = boardData.getPiece(possibleMov[0], possibleMov[1]);
-        console.log(attackCheck);
         if (attackCheck !== undefined && attackCheck.type === KING) {
+          cell.classList.add("attack");
+
           return true;
         }
       }
     }
   }
 }
+function ifKingCanMove() {
+  let whiteKing = boardData.getpiecebytype(KING, WHITE_PLAYER);
+  let possibleMoves = [];
+  let whitemoves = [];
+  check = [];
+  whitemoves = whiteKing.getPossibleMoves();
+  if ((possibleMoves = [])) {
+    return true;
+  }
+}
+function attack() {
+  let whiteKing = boardData.getpiecebytype(KING, WHITE_PLAYER);
+  let blackKing = boardData.getpiecebytype(KING, BLACK_PLAYER);
+  let blackMoves = [];
+  let whitemoves = [];
+  let attack = [];
+  let attacked;
+  whitemoves = whiteKing.check();
 
+  for (let possibleMove of whitemoves) {
+    attacker = boardData.getPiece(possibleMove[0], possibleMove[1]);
+    let cell1 = table.rows[possibleMove[0]].cells[possibleMove[1]];
+
+    if (attacker !== undefined && attacker.player === BLACK_PLAYER) {
+      const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
+      attack = attacker.getPossibleMoves();
+      if (attack !== undefined) {
+        return attack;
+      }
+    }
+  }
+  return [];
+}
+function checkWhoCanEat(attack) {
+  let possibleMoves = [];
+  let whitemoves = [];
+  check = [];
+  let a = false;
+  let whiteKing = boardData.getpiecebytype(KING, WHITE_PLAYER);
+  whitemoves = whiteKing.check();
+
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    for (let j = 0; j < BOARD_SIZE; j++) {
+      const cell = table.rows[i].cells[j];
+
+      let possible = boardData.getPiece(i, j);
+      if (possible !== undefined && possible.player === WHITE_PLAYER) {
+        possibleMoves = possible.getPossibleMoves();
+      }
+      if (possibleMoves !== undefined) {
+        for (const whiteMove of whitemoves) {
+          for (const possibleMove of possibleMoves) {
+            if (
+              possibleMove[0] === whiteMove[0] &&
+              possibleMove[1] === whiteMove[1]
+            ) {
+              for (const attacked of attack) {
+                if (
+                  attacked[0] === possibleMove[0] &&
+                  attacked[1] === possibleMove[1] &&
+                  attacked[0] === whiteMove[0] &&
+                  attacked[1] === whiteMove[1]
+                ) {
+                  table.rows[whiteMove[0]].cells[whiteMove[1]].classList.add(
+                    "protect"
+                  );
+                  a = true;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return a;
+}
 function createChessBoard() {
   // Create empty chess board HTML:
   table = document.createElement("table");
