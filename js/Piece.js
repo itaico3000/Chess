@@ -6,8 +6,8 @@ class Piece {
       this.player = player;
     }
   
-    ifKingCanMove() {
-        let whiteKing = boardData.getpiecebytype(KING, WHITE_PLAYER);
+    ifKingCanMove(color ,attackColor) {
+        let whiteKing = boardData.getpiecebytype(KING, color);
         let possibleMoves = [];
         let whitemoves = [];
        let check = [];
@@ -19,7 +19,7 @@ class Piece {
         for (let i = 0; i < BOARD_SIZE; i++) {
           for (let j = 0; j < BOARD_SIZE; j++) {
             let possible = boardData.getPiece(i, j);
-            if (possible !== undefined && possible.player === BLACK_PLAYER) {
+            if (possible !== undefined && possible.player === attackColor) {
               possibleMoves=possible.getPossibleMoves();
               for (const possibleMove of possibleMoves) {
                 for (let whiteMove = 0; whiteMove < whitemoves.length; whiteMove++) {
@@ -97,7 +97,67 @@ class Piece {
     
         return filteredMoves;
     }
- 
+    rowandcolBlack(rowAttacker ,rowDefender ,colAttacker ,colDefender ,whiteKing)
+    {
+        let relativeMoves = [];
+
+        if (rowAttacker>rowDefender &&colAttacker===colDefender) { // witch direction the king is attacked -down
+            
+           relativeMoves= relativeMoves.concat(blackArrow(whiteKing,1,0));
+        }
+        if (rowAttacker<rowDefender &&colAttacker===colDefender) { // witch direction the king is attacked -up
+            relativeMoves= relativeMoves.concat(blackArrow(whiteKing,-1,0));
+        }
+        if (rowAttacker===rowDefender &&colAttacker>colDefender) { // witch direction the king is attacked -right
+            relativeMoves= relativeMoves.concat(blackArrow(whiteKing,0,1));
+        }
+        if (rowAttacker===rowDefender &&colAttacker<colDefender) { // witch direction the king is attacked -left
+            relativeMoves= relativeMoves.concat(blackArrow(whiteKing,0,-1));
+        }
+        if (rowAttacker<rowDefender &&colAttacker<colDefender) { // witch direction the king is attacked -left up
+            relativeMoves= relativeMoves.concat(blackArrow(whiteKing,-1,-1));
+        }
+        if (rowAttacker<rowDefender &&colAttacker>colDefender) { // witch direction the king is attacked -left up
+            relativeMoves= relativeMoves.concat(blackArrow(whiteKing,-1,1));
+        }
+        if (rowAttacker>rowDefender &&colAttacker>colDefender) { // witch direction the king is attacked -left down
+            relativeMoves= relativeMoves.concat(blackArrow(whiteKing,1,1));
+        }
+        if (rowAttacker>rowDefender &&colAttacker<colDefender) { // witch direction the king is attacked -right down
+            relativeMoves= relativeMoves.concat(blackArrow(whiteKing,1,-1));
+        }
+        let absoluteMoves = [];
+        for (let relativeMove of relativeMoves) {
+          //check all possibilities of this.pawn
+          let absoluteRow = this.row + relativeMove[0];
+          let absoluteCol = this.col + relativeMove[1];
+    
+          let checkData = boardData.getPiece(this.row, this.col);
+    
+          absoluteMoves.push([absoluteRow, absoluteCol]);
+    
+          lastData = boardData.getPiece(this.row, this.col);
+        }
+    
+        // Get filtered absolute moves
+        let filteredMoves = [];
+        for (let absoluteMove of absoluteMoves) {
+          let absoluteRow = absoluteMove[0];
+          let absoluteCol = absoluteMove[1];
+          let checkDataDown = boardData.getPiece(absoluteRow, absoluteCol);
+    
+          if (
+            absoluteRow >= 0 &&
+            absoluteRow <= 7 &&
+            absoluteCol >= 0 &&
+            absoluteCol <= 7
+          ) {
+            filteredMoves.push(absoluteMove); //push this possibility
+          }
+        }
+    
+        return filteredMoves;
+    }
     whoCanEat(attacker){
     let relativeMoves = [];
     if (this.player === WHITE_PLAYER) {

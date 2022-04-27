@@ -119,7 +119,7 @@ function addPossibleOptions(piece, possibleMoves, turn) {
   if (piece !== undefined && turn % 2 == 0 && piece.player === WHITE_PLAYER) {
     possibleMoves = piece.getPossibleMoves();
     if (piece.type === KING && piece.player === WHITE_PLAYER) {
-      possibleMoves = piece.ifKingCanMove();
+      possibleMoves = piece.ifKingCanMove(WHITE_PLAYER, BLACK_PLAYER);
     }
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
@@ -131,7 +131,9 @@ function addPossibleOptions(piece, possibleMoves, turn) {
     piece.player === BLACK_PLAYER
   ) {
     possibleMoves = piece.getPossibleMoves();
-
+    if (piece.type === KING && piece.player === BLACK_PLAYER) {
+      possibleMoves = piece.ifKingCanMove(BLACK_PLAYER, WHITE_PLAYER);
+    }
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       cell.classList.add("selectedoptions");
@@ -141,7 +143,7 @@ function addPossibleOptions(piece, possibleMoves, turn) {
 }
 function onCellClick(event, row, col) {
   // Clear all previous possible moves
-
+  let turnColor;
   if (selectedCell !== undefined && lastcell !== undefined) {
     if (lastcell === selectedCell) {
       child.push(lastcell.firstChild);
@@ -188,19 +190,46 @@ function onCellClick(event, row, col) {
       if (turn % 2 == 0) {
         let h2 = document.querySelector("h2");
         h2.innerText = "this is white turn";
+        turnColor = WHITE_PLAYER;
       } else {
         let h2 = document.querySelector("h2");
         h2.innerText = "this is black turn";
+        turnColor = BLACK_PLAYER;
       }
-      if (checkIfchecked()) {
+      if (checkIfchecked(turnColor) === WHITE_PLAYER) {
+        let color = WHITE_PLAYER;
+        let attackColor = BLACK_PLAYER;
         alert("check! protect your king first time");
-        let o = checkWhoCanEat(attack());
-        let w = ifKingCanMove();
-        let q = checkWhoCanBlock(attack());
+        let o = checkWhoCanEat(attack(color, attackColor), color, attackColor);
+        let w = ifKingCanMove(color, attackColor);
+        let q = checkWhoCanBlock(
+          attack(color, attackColor),
+          color,
+          attackColor
+        );
         if (w) {
           if (!q) {
             if (!o) {
-              alert("checkMate !!!!!!!!!!!!!!!!!!");
+              alert("checkMate !!!!!!!!!!!!!!!!!! white wins!!!!");
+            }
+          }
+        }
+      } else if (checkIfchecked(turnColor) === BLACK_PLAYER) {
+        let color = BLACK_PLAYER;
+        let attackColor = WHITE_PLAYER;
+        alert("check! protect your black king first time");
+        console.log(attack(color, attackColor), " this is attack!");
+        let o = checkWhoCanEat(attack(color, attackColor), color, attackColor);
+        let w = ifKingCanMove(color, attackColor);
+        let q = checkWhoCanBlock(
+          attack(color, attackColor),
+          color,
+          attackColor
+        );
+        if (w) {
+          if (!q) {
+            if (!o) {
+              alert("checkMate !!!!!!!!!!!!!!!!!! BLACK wins!!!!");
             }
           }
         }
@@ -245,15 +274,17 @@ function move(savedPossibleMoves, possibleMoves, row, col) {
   }
   return turn;
 }
-function checkIfchecked() {
+function checkIfchecked(turnColor) {
   let whiteKing = boardData.getpiecebytype(KING, WHITE_PLAYER);
   let blackKing = boardData.getpiecebytype(KING, BLACK_PLAYER);
   let blackMoves = [];
   let whitemoves = [];
   let attack = [];
+  let color;
   let a = false;
 
   whitemoves = whiteKing.check();
+
   for (let possibleMove of whitemoves) {
     let attacker = boardData.getPiece(possibleMove[0], possibleMove[1]);
     let cell1 = table.rows[possibleMove[0]].cells[possibleMove[1]];
@@ -264,8 +295,13 @@ function checkIfchecked() {
       for (const possibleMov of attack) {
         let attackCheck = boardData.getPiece(possibleMov[0], possibleMov[1]);
 
-        if (attackCheck !== undefined && attackCheck.type === KING) {
-          a = true;
+        if (
+          attackCheck !== undefined &&
+          attackCheck.type === KING &&
+          turnColor === WHITE_PLAYER
+        ) {
+          color = WHITE_PLAYER;
+          return color;
         }
       }
     }
@@ -281,22 +317,27 @@ function checkIfchecked() {
 
       for (const possibleMov of attack) {
         let attackCheck = boardData.getPiece(possibleMov[0], possibleMov[1]);
-        if (attackCheck !== undefined && attackCheck.type === KING) {
+        if (
+          attackCheck !== undefined &&
+          attackCheck.type === KING &&
+          turnColor === BLACK_PLAYER
+        ) {
           cell.classList.add("attack");
 
-          return true;
+          color = BLACK_PLAYER;
+          return color;
         }
       }
     }
   }
   return a;
 }
-function ifKingCanMove() {
-  let whiteKing = boardData.getpiecebytype(KING, WHITE_PLAYER);
+function ifKingCanMove(color, attackColor) {
+  let whiteKing = boardData.getpiecebytype(KING, color);
   let possibleMoves = [];
   let whitemoves = [];
   check = [];
-  whitemoves = whiteKing.ifKingCanMove();
+  whitemoves = whiteKing.ifKingCanMove(color, attackColor);
   console.log(whitemoves);
 
   if ((whitemoves = [])) {
@@ -304,8 +345,8 @@ function ifKingCanMove() {
     return true;
   }
 }
-function attack() {
-  let whiteKing = boardData.getpiecebytype(KING, WHITE_PLAYER);
+function attack(color, attackColor) {
+  let whiteKing = boardData.getpiecebytype(KING, color);
   let blackKing = boardData.getpiecebytype(KING, BLACK_PLAYER);
   let blackMoves = [];
   let whitemoves = [];
@@ -317,7 +358,7 @@ function attack() {
     attacker = boardData.getPiece(possibleMove[0], possibleMove[1]);
     let cell1 = table.rows[possibleMove[0]].cells[possibleMove[1]];
 
-    if (attacker !== undefined && attacker.player === BLACK_PLAYER) {
+    if (attacker !== undefined && attacker.player === attackColor) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       attack = attacker.getPossibleMoves();
       if (attack !== undefined) {
@@ -335,7 +376,7 @@ function attack() {
   return [];
 }
 
-function checkWhoCanBlock(attacker) {
+function checkWhoCanBlock(attacker, color, attackColor) {
   let possibleMoves = [];
   let whitemoves = [];
   let check;
@@ -343,10 +384,18 @@ function checkWhoCanBlock(attacker) {
   let attack;
   let attackerName;
   let otherAttacker;
-  let whiteKing = boardData.getpiecebytype(KING, WHITE_PLAYER);
+  let whiteKing = boardData.getpiecebytype(KING, color);
 
-  if (attacker.type !== KNIGHT) {
+  if (attacker.type !== KNIGHT && color === WHITE_PLAYER) {
     check = whiteKing.rowandcol(
+      attacker.row,
+      whiteKing.row,
+      attacker.col,
+      whiteKing.col,
+      whiteKing
+    );
+  } else {
+    check = whiteKing.rowandcolBlack(
       attacker.row,
       whiteKing.row,
       attacker.col,
@@ -362,13 +411,13 @@ function checkWhoCanBlock(attacker) {
       let possible = boardData.getPiece(i, j);
       if (
         possible !== undefined &&
-        possible.player === WHITE_PLAYER &&
+        possible.player === color &&
         possible.type === KING
       ) {
-        possibleMoves = possible.ifKingCanMove();
+        possibleMoves = possible.ifKingCanMove(color, attackColor);
       } else if (
         possible !== undefined &&
-        possible.player === WHITE_PLAYER &&
+        possible.player === color &&
         possible.type !== KING
       ) {
         possibleMoves = possible.getPossibleMoves();
@@ -404,7 +453,7 @@ function checkWhoCanBlock(attacker) {
 
   return a;
 }
-function checkWhoCanEat(attacker) {
+function checkWhoCanEat(attacker, color, attackColor) {
   let possibleMoves;
   let possible;
   let whitemoves = [];
@@ -419,13 +468,13 @@ function checkWhoCanEat(attacker) {
       possible = boardData.getPiece(i, j);
       if (
         possible !== undefined &&
-        possible.player === WHITE_PLAYER &&
+        possible.player === color &&
         possible.type === KING
       ) {
-        possibleMoves = possible.ifKingCanMove();
+        possibleMoves = possible.ifKingCanMove(color, attackColor);
       } else if (
         possible !== undefined &&
-        possible.player === WHITE_PLAYER &&
+        possible.player === color &&
         possible.type !== KING
       ) {
         possibleMoves = possible.getPossibleMoves();
