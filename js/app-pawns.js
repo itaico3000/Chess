@@ -105,13 +105,17 @@ function removeCellClasses() {
       table.rows[i].cells[j].classList.remove("protect");
       table.rows[i].cells[j].classList.remove("protector");
       
-      
       if (table.rows[i].cells[j].firstChild === null) {
+
         let remove = boardData.getPiece(i, j);
         if (remove !== undefined) {
           boardData.removePiece(remove.type, remove.player);
           boardData.removeDuplicates();
         }
+      }
+      else{
+        table.rows[i].cells[j].firstChild.classList.remove('animate__animated');
+
       }
     }
   }
@@ -174,7 +178,7 @@ function onCellClick(event, row, col) {
   // let savedPiece =piece;
   // let  savedPossibleMoves= possibleMoves;
   if (savedPossibleMoves !== undefined) {
-    turn += move(savedPossibleMoves, possibleMoves, row, col);
+    turn += move(savedPossibleMoves, possibleMoves, row, col ,savedPiece.player);
 
     if (
       selectedCell.firstChild !== undefined &&
@@ -307,7 +311,7 @@ function removeAll(){
         createChessBoard();
 }
 
-function move(savedPossibleMoves, possibleMoves, row, col) {
+function move(savedPossibleMoves, possibleMoves, row, col , color) {
   let turn = 0;
   for (const i of savedPossibleMoves) {
     // for (const k of possibleMoves) {
@@ -315,7 +319,21 @@ function move(savedPossibleMoves, possibleMoves, row, col) {
       //  if (lastcell!==undefined) {
 
       if (child.length > 0 && child[0] !== null) {
-        const cell = table.rows[i[0]].cells[i[1]].append(child.pop());
+        
+        let cell = table.rows[i[0]].cells[i[1]].append(child.pop());
+         cell = table.rows[i[0]].cells[i[1]]
+        if (color===BLACK_PLAYER) {
+          cell.firstChild.classList.add('animate__animated');
+          cell.firstChild.classList.add('animate__fadeIn');
+         
+
+        }
+        else{
+          cell.firstChild.classList.add('animate__animated');
+          cell.firstChild.classList.add('animate__fadeIn');
+         
+        }
+        
         piece = boardData.changeLocation(
           i[0],
           i[1],
@@ -586,6 +604,11 @@ function createChessBoard() {
   // Create empty chess board HTML:
   table = document.createElement("table");
   document.body.appendChild(table);
+  table.classList.add('animate__animated');
+  table.classList.add('animate__fadeInUpBig');
+  table.classList.add('animate__delay-2s');
+
+
   for (let row = 0; row < BOARD_SIZE; row++) {
     const rowElement = table.insertRow();
     for (let col = 0; col < BOARD_SIZE; col++) {
