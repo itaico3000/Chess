@@ -27,6 +27,7 @@ let lastTurn;
 let save = 0;
 let final = [];
 
+//whitearrow - check by direction if there any possible moves
 function whiteArrow(piece, row, col) {
   let arr = [];
   for (let i = 1; i < 8; i++) {
@@ -44,6 +45,8 @@ function whiteArrow(piece, row, col) {
   }
   return arr;
 }
+
+//blackArrow - check by direction if there any possible moves;
 function blackArrow(piece, row, col) {
   let arr = [];
   for (let i = 1; i < 8; i++) {
@@ -62,6 +65,7 @@ function blackArrow(piece, row, col) {
   return arr;
 }
 
+//adds all pieces
 function getInitialPieces() {
   let result = [];
 
@@ -75,7 +79,7 @@ function getInitialPieces() {
 
   return result;
 }
-
+//add first row pieces
 function addFirstRowPieces(result, row, player) {
   result.push(new Piece(row, 0, ROOK, player));
   result.push(new Piece(row, 1, KNIGHT, player));
@@ -87,6 +91,7 @@ function addFirstRowPieces(result, row, player) {
   result.push(new Piece(row, 7, ROOK, player));
 }
 
+//add images
 function addImage(cell, player, name) {
   if (player === undefined) {
   } else {
@@ -96,6 +101,8 @@ function addImage(cell, player, name) {
     cell.appendChild(image);
   }
 }
+
+// removes certain variables from the taable
 function removeCellClasses() {
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
@@ -104,25 +111,24 @@ function removeCellClasses() {
       table.rows[i].cells[j].classList.remove("attack");
       table.rows[i].cells[j].classList.remove("protect");
       table.rows[i].cells[j].classList.remove("protector");
-      
-      if (table.rows[i].cells[j].firstChild === null) {
 
+      if (table.rows[i].cells[j].firstChild === null) {
         let remove = boardData.getPiece(i, j);
         if (remove !== undefined) {
           boardData.removePiece(remove.type, remove.player);
           boardData.removeDuplicates();
         }
-      }
-      else{
-        table.rows[i].cells[j].firstChild.classList.remove('animate__animated');
-
+      } else {
+        table.rows[i].cells[j].firstChild.classList.remove("animate__animated");
       }
     }
   }
   let h2 = document.querySelector("h2");
 
-   h2.classList.remove('animate__zoomIn');
+  h2.classList.remove("animate__zoomIn");
 }
+
+// add possible optins to the board
 function addPossibleOptions(piece, possibleMoves, turn) {
   if (piece !== undefined && turn % 2 == 0 && piece.player === WHITE_PLAYER) {
     possibleMoves = piece.getPossibleMoves();
@@ -149,6 +155,8 @@ function addPossibleOptions(piece, possibleMoves, turn) {
   }
   return possibleMoves;
 }
+
+// what happens when click ocurred
 function onCellClick(event, row, col) {
   // Clear all previous possible moves
   let turnColor;
@@ -178,7 +186,13 @@ function onCellClick(event, row, col) {
   // let savedPiece =piece;
   // let  savedPossibleMoves= possibleMoves;
   if (savedPossibleMoves !== undefined) {
-    turn += move(savedPossibleMoves, possibleMoves, row, col ,savedPiece.player);
+    turn += move(
+      savedPossibleMoves,
+      possibleMoves,
+      row,
+      col,
+      savedPiece.player
+    );
 
     if (
       selectedCell.firstChild !== undefined &&
@@ -195,28 +209,25 @@ function onCellClick(event, row, col) {
 
     if (turn > lastTurn) {
       selectedCell = undefined;
-      if (turn % 2 === 0) {  // todo - change turn to words
+      if (turn % 2 === 0) {
+        // todo - change turn to words
         let h2 = document.querySelector("h2");
-         h2.classList.add('animate__animated');
-        h2.classList.add('animate__zoomIn');
-       
-
+        h2.classList.add("animate__animated");
+        h2.classList.add("animate__zoomIn");
 
         h2.innerText = "This is white player's turn";
         turnColor = WHITE_PLAYER;
         AllCheckPossibilities(turnColor);
       } else {
         let h2 = document.querySelector("h2");
-        h2.classList.add('animate__animated');
-        h2.classList.add('animate__zoomIn');
-       
+        h2.classList.add("animate__animated");
+        h2.classList.add("animate__zoomIn");
+
         h2.innerText = "This is black player's turn";
-       
+
         turnColor = BLACK_PLAYER;
         AllCheckPossibilities(turnColor);
       }
-      
-     
     }
   }
 
@@ -233,6 +244,7 @@ function onCellClick(event, row, col) {
   child = [];
 }
 
+// check if player can win or if there is check
 function AllCheckPossibilities(turnColor) {
   if (checkIfchecked(turnColor) === WHITE_PLAYER) {
     let color = WHITE_PLAYER;
@@ -240,31 +252,25 @@ function AllCheckPossibilities(turnColor) {
     alert("check! protect your king first time");
     let o = checkWhoCanEat(attack(color, attackColor), color, attackColor);
     let w = ifKingCanMove(color, attackColor);
-    let q = checkWhoCanBlock(
-      attack(color, attackColor),
-      color,
-      attackColor
-    );
+    let q = checkWhoCanBlock(attack(color, attackColor), color, attackColor);
     if (w) {
       if (!q) {
         if (!o) {
-          
-          div = document.createElement('div');
-          div.innerText ="CHECK MATE! BLACK WINS";
-          div.classList.add('winner-dialog');
-          let input =document.querySelector('input');
-          document.querySelector('input').style.display='block';
+          div = document.createElement("div");
+          div.innerText = "CHECK MATE! BLACK WINS";
+
+          div.classList.add("winner-dialog");
+
+          let input = document.querySelector("input");
+          document.querySelector("input").style.display = "block";
           div.append(input);
-          input.onclick = ()=>{removeAll();
-            turn =0;
+          input.onclick = () => {
+            removeAll();
+            turn = 0;
             let h2 = document.querySelector("h2");
             h2.innerText = "This is white player's turn";
-
-
-        };
+          };
           table.append(div);
-          
-
         }
       }
     }
@@ -274,44 +280,40 @@ function AllCheckPossibilities(turnColor) {
     alert("check! protect your black king first time");
     let o = checkWhoCanEat(attack(color, attackColor), color, attackColor);
     let w = ifKingCanMove(color, attackColor);
-    let q = checkWhoCanBlock(
-      attack(color, attackColor),
-      color,
-      attackColor
-    );
+    let q = checkWhoCanBlock(attack(color, attackColor), color, attackColor);
     if (w) {
       if (!q) {
         if (!o) {
-          div = document.createElement('div');
-          div.innerText ="CHECK MATE! WHITE WINS";
-           
-          div.classList.add('winner-dialog');
-         
-          let input =document.querySelector('input');
-          document.querySelector('input').style.display='block';
+          div = document.createElement("div");
+          div.innerText = "CHECK MATE! WHITE WINS";
+
+          div.classList.add("winner-dialog");
+
+          let input = document.querySelector("input");
+          document.querySelector("input").style.display = "block";
           div.append(input);
-          input.onclick = ()=>{removeAll();
-            turn =0;
+          input.onclick = () => {
+            removeAll();
+            turn = 0;
             let h2 = document.querySelector("h2");
             h2.innerText = "This is white player's turn";
-
-
-        };
+          };
           table.append(div);
         }
       }
     }
   }
-  
 }
 
-function removeAll(){
-  let table = document.querySelector('table');
+//create new chessboard
+function removeAll() {
+  let table = document.querySelector("table");
   table.remove();
-        createChessBoard();
+  createChessBoard();
 }
 
-function move(savedPossibleMoves, possibleMoves, row, col , color) {
+//player movement
+function move(savedPossibleMoves, possibleMoves, row, col, color) {
   let turn = 0;
   for (const i of savedPossibleMoves) {
     // for (const k of possibleMoves) {
@@ -319,21 +321,16 @@ function move(savedPossibleMoves, possibleMoves, row, col , color) {
       //  if (lastcell!==undefined) {
 
       if (child.length > 0 && child[0] !== null) {
-        
         let cell = table.rows[i[0]].cells[i[1]].append(child.pop());
-         cell = table.rows[i[0]].cells[i[1]]
-        if (color===BLACK_PLAYER) {
-          cell.firstChild.classList.add('animate__animated');
-          cell.firstChild.classList.add('animate__fadeIn');
-         
+        cell = table.rows[i[0]].cells[i[1]];
+        if (color === BLACK_PLAYER) {
+          cell.firstChild.classList.add("animate__animated");
+          cell.firstChild.classList.add("animate__fadeIn");
+        } else {
+          cell.firstChild.classList.add("animate__animated");
+          cell.firstChild.classList.add("animate__fadeIn");
+        }
 
-        }
-        else{
-          cell.firstChild.classList.add('animate__animated');
-          cell.firstChild.classList.add('animate__fadeIn');
-         
-        }
-        
         piece = boardData.changeLocation(
           i[0],
           i[1],
@@ -351,8 +348,7 @@ function move(savedPossibleMoves, possibleMoves, row, col , color) {
   return turn;
 }
 
-
-
+//check if check
 function checkIfchecked(turnColor) {
   let whiteKing = boardData.getpiecebytype(KING, WHITE_PLAYER);
   let blackKing = boardData.getpiecebytype(KING, BLACK_PLAYER);
@@ -398,7 +394,6 @@ function checkIfchecked(turnColor) {
           attackCheck.type === KING &&
           turnColor === BLACK_PLAYER
         ) {
-
           color = BLACK_PLAYER;
           return color;
         }
@@ -408,30 +403,27 @@ function checkIfchecked(turnColor) {
   return a;
 }
 
-
-
+//check if king can moves **need to finish all bugs
 function ifKingCanMove(color, attackColor) {
   let whiteKing = boardData.getpiecebytype(KING, color);
   let possibleMoves = [];
   let whitemoves = [];
   check = [];
   whitemoves = whiteKing.ifKingCanMove(color, attackColor);
-  console.log('this is whiteMoves ', whitemoves);
-  if ((whitemoves === [])) {
+  console.log("this is whiteMoves ", whitemoves);
+  if (whitemoves === []) {
     return true;
   }
-  if (whitemoves.length===1) { 
-   let d = boardData.getPiece(whitemoves[0][0],whitemoves[0][1])
-   if (d!==undefined) {
-     return true;
-   }
+  if (whitemoves.length === 1) {
+    let d = boardData.getPiece(whitemoves[0][0], whitemoves[0][1]);
+    if (d !== undefined) {
+      return true;
+    }
   }
   return false;
 }
 
-
-
-
+//returns the attacker on the king
 function attack(color, attackColor) {
   let whiteKing = boardData.getpiecebytype(KING, color);
   let blackKing = boardData.getpiecebytype(KING, BLACK_PLAYER);
@@ -463,8 +455,7 @@ function attack(color, attackColor) {
   return [];
 }
 
-
-
+//checks who can block the attacker
 function checkWhoCanBlock(attacker, color, attackColor) {
   let possibleMoves = [];
   let whitemoves = [];
@@ -507,7 +498,7 @@ function checkWhoCanBlock(attacker, color, attackColor) {
       } else if (
         possible !== undefined &&
         possible.player === color &&
-        possible.type !== KING 
+        possible.type !== KING
       ) {
         possibleMoves = possible.getPossibleMoves();
       }
@@ -543,7 +534,7 @@ function checkWhoCanBlock(attacker, color, attackColor) {
   return a;
 }
 
-
+//checks who can eat the attacker
 
 function checkWhoCanEat(attacker, color, attackColor) {
   let possibleMoves;
@@ -573,41 +564,33 @@ function checkWhoCanEat(attacker, color, attackColor) {
       }
       if (possibleMoves !== undefined) {
         for (const possibleMove of possibleMoves) {
-          let protector = boardData.getPiece(
-            possibleMove[0],
-            possibleMove[1]
-          ); //pawn of possiblemove of white player
+          let protector = boardData.getPiece(possibleMove[0], possibleMove[1]); //pawn of possiblemove of white player
           if (
             protector !== undefined &&
             protector.row === attacker.row &&
-            protector.col === attacker.col &&possible.type!=KING
+            protector.col === attacker.col &&
+            possible.type != KING
           ) {
             cell.classList.add("protector");
             a = true;
-            
-            
-            possibleMoves = undefined;
-          
-          }
 
+            possibleMoves = undefined;
+          }
         }
       }
     }
-
   }
   return a;
 }
 
-
-
+// creates the chess-board
 function createChessBoard() {
   // Create empty chess board HTML:
   table = document.createElement("table");
   document.body.appendChild(table);
-  table.classList.add('animate__animated');
-  table.classList.add('animate__fadeInUpBig');
-  table.classList.add('animate__delay-2s');
-
+  table.classList.add("animate__animated");
+  table.classList.add("animate__fadeInUpBig");
+  //table.classList.add('animate__delay-2s');
 
   for (let row = 0; row < BOARD_SIZE; row++) {
     const rowElement = table.insertRow();
@@ -632,7 +615,5 @@ function createChessBoard() {
     addImage(cell, piece.player, piece.type);
   }
 }
-
-
 
 window.addEventListener("load", createChessBoard);

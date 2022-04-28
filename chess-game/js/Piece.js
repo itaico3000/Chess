@@ -5,7 +5,7 @@ class Piece {
     this.type = type;
     this.player = player;
   }
-
+  //return array of possible moves of the king - if he got block
   ifKingCanMove(color, attackColor) {
     let whiteKing = boardData.getpiecebytype(KING, color);
     let possibleMoves = [];
@@ -43,67 +43,45 @@ class Piece {
                   possibleMove[0] === whitemoves[whiteMove][0] &&
                   possibleMove[1] === whitemoves[whiteMove][1]
                 ) {
-
                   rowAttacker = possible.row;
                   colAttacker = possible.col;
-                  check =possibleMove;
+                  check = possibleMove;
                   whitemoves.splice(whiteMove, 1);
                   whiteMove--;
-                  
-                  
                 }
-                
               }
-              
             }
           }
         }
       }
     }
     for (let i = 0; i < whitemoves.length; i++) {
-      colDefender =whitemoves[i][1];
-      rowDefender= whitemoves[i][0];
-     
-     
-      if (
-        rowAttacker > rowDefender &&
-        colAttacker === colDefender 
-       
-      ) {
+      colDefender = whitemoves[i][1];
+      rowDefender = whitemoves[i][0];
+
+      if (rowAttacker > rowDefender && colAttacker === colDefender) {
         // witch direction the king is attacked -down
         whitemoves.splice(i, 1);
         i--;
-      }
-     else if (
-        rowAttacker < rowDefender &&
-        colAttacker === colDefender 
-      
-      ) {
+      } else if (rowAttacker < rowDefender && colAttacker === colDefender) {
         // witch direction the king is attacked -up
         whitemoves.splice(i, 1);
         i--;
-      }
-     else if (
-        rowAttacker === rowDefender &&
-        colAttacker > colDefender 
-       
-      ) {
+      } else if (rowAttacker === rowDefender && colAttacker > colDefender) {
         // witch direction the king is attacked -right
         whitemoves.splice(i, 1);
         i--;
-      }
-      else if (
-        rowAttacker === rowDefender &&
-        colAttacker < colDefender 
-      ) {
+      } else if (rowAttacker === rowDefender && colAttacker < colDefender) {
         // witch direction the king is attacked -left
         whitemoves.splice(i, 1);
         i--;
       }
-   }
-   
+    }
+
     return whitemoves;
   }
+
+  //returns the arrow with the enemy -White
   rowandcol(rowAttacker, rowDefender, colAttacker, colDefender, whiteKing) {
     let relativeMoves = [];
 
@@ -171,6 +149,8 @@ class Piece {
 
     return filteredMoves;
   }
+
+  //return the arrow with the enemy - Black
   rowandcolBlack(
     rowAttacker,
     rowDefender,
@@ -245,60 +225,22 @@ class Piece {
 
     return filteredMoves;
   }
-  whoCanEat(attacker) {
-    let relativeMoves = [];
-    if (this.player === WHITE_PLAYER) {
-      if (attacker.type === PAWN) {
-        relativeMoves = this.getPawnWRelativeMoves();
-      } else if (attacker.type === KNIGHT) {
-        relativeMoves = relativeMoves.concat(
-          this.getWhiteKnightRelativeMoves()
-        );
-      } else if (attacker.type === QUEEN) {
-        relativeMoves = relativeMoves.concat(this.getqueenRelativeMoves());
-      }
-    }
 
-    let absoluteMoves = [];
-    for (let relativeMove of relativeMoves) {
-      //check all possibilities of this.pawn
-      let absoluteRow = this.row + relativeMove[0];
-      let absoluteCol = this.col + relativeMove[1];
-
-      let checkData = boardData.getPiece(this.row, this.col);
-
-      absoluteMoves.push([absoluteRow, absoluteCol]);
-
-      lastData = boardData.getPiece(this.row, this.col);
-    }
-
-    // Get filtered absolute moves
-    let filteredMoves = [];
-    for (let absoluteMove of absoluteMoves) {
-      let absoluteRow = absoluteMove[0];
-      let absoluteCol = absoluteMove[1];
-      let checkDataDown = boardData.getPiece(absoluteRow, absoluteCol);
-
-      if (
-        absoluteRow >= 0 &&
-        absoluteRow <= 7 &&
-        absoluteCol >= 0 &&
-        absoluteCol <= 7
-      ) {
-        filteredMoves.push(absoluteMove); //push this possibility
-      }
-    }
-
-    return filteredMoves;
-  }
+  
+  //  gets all the possibilities of the enemy from the king angle
   check() {
     let relativeMoves = [];
-    if (this.player === WHITE_PLAYER) {
+    if (this.player === WHITE_PLAYER) 
+    {
+      console.log('in!');
+
       relativeMoves = this.getPawnWRelativeMoves();
       relativeMoves = relativeMoves.concat(this.getWhiteKnightRelativeMoves());
       relativeMoves = relativeMoves.concat(this.getqueenRelativeMoves());
       relativeMoves = relativeMoves.concat(this.getWhiteKingRelativeMoves());
-    } else {
+    }
+     else
+    {
       relativeMoves = this.getPawnBRelativeMoves();
       relativeMoves = relativeMoves.concat(this.getBlackKnightRelativeMoves());
       relativeMoves = relativeMoves.concat(this.getqueenRelativeMoves());
@@ -339,6 +281,7 @@ class Piece {
     //return filteredMoves;
   }
 
+  //return array of possible moves
   getPossibleMoves() {
     // Get relative moves
 
@@ -398,6 +341,7 @@ class Piece {
     //return filteredMoves;
   }
 
+  //returns array of White pawn possible moves
   getPawnWRelativeMoves() {
     let result = [];
     let a = 0;
@@ -463,6 +407,9 @@ class Piece {
 
     return result;
   }
+
+  //returns array of Black pawn possible moves
+
   getPawnBRelativeMoves() {
     let result = [];
     let a = 0;
@@ -530,6 +477,7 @@ class Piece {
 
     return result;
   }
+  //returns array of white Knight possible moves
 
   getWhiteKnightRelativeMoves() {
     let result = [];
@@ -555,6 +503,8 @@ class Piece {
 
     return result;
   }
+  //returns array of black Knight possible moves
+
   getBlackKnightRelativeMoves() {
     let result = [];
 
@@ -579,6 +529,8 @@ class Piece {
 
     return result;
   }
+  //returns array of white King possible moves
+
   getWhiteKingRelativeMoves() {
     let possibleMoves = [];
     let whitemoves = [];
@@ -605,8 +557,10 @@ class Piece {
 
     return result;
   }
+  //returns array of black King possible moves
+
   getBlcakKingRelativeMoves() {
-    let arr =[];
+    let arr = [];
     let result = [];
     result.push([1, 1]);
     result.push([1, -1]);
@@ -621,16 +575,16 @@ class Piece {
         this.row + result[i][0],
         this.col + result[i][1]
       );
-     
-      
+
       if (currentPiece !== undefined && currentPiece.player === BLACK_PLAYER) {
-       
         result.splice(i, 1);
         i--;
       }
     }
     return result;
   }
+
+  //returns array of rook possible moves
   getRookRelativeMoves() {
     let result = [];
 
@@ -655,6 +609,8 @@ class Piece {
 
     return result;
   }
+
+  //retuns array of bishop possible moves
   getBishopRelativeMoves() {
     let result = [];
     if (this.player === WHITE_PLAYER) {
@@ -676,6 +632,8 @@ class Piece {
     }
     return result;
   }
+
+  //retuns array of queen possible moves
   getqueenRelativeMoves() {
     let result = [];
     if (this.player === WHITE_PLAYER) {

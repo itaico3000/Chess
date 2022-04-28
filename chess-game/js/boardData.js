@@ -11,6 +11,8 @@ class BoardData {
       }
     }
   }
+
+  //removes piece from the array
   removePiece(type, player) {
     let a = boardData.getpiecebytype(type, player);
     for (const i of this.pieces) {
@@ -19,6 +21,7 @@ class BoardData {
       }
     }
   }
+  //removes Duplicates from the array
   removeDuplicates() {
     for (let i = 0; i < this.pieces.length; i++) {
       const element = this.pieces[i];
@@ -31,6 +34,7 @@ class BoardData {
     }
   }
 
+  //changes the location of the pawn if the other pawn is not exists
   changeLocation(row, col, lastrow, lastcol, lastype, lastplayer) {
     let remove = this.getPiece(lastrow, lastcol);
     if (remove) {
@@ -41,6 +45,7 @@ class BoardData {
 
     return remove;
   }
+  //removes the pawn from the list;
   eat(type, player, row, col) {
     for (let i = 0; i < this.pieces.length; i++) {
       if (
@@ -54,6 +59,7 @@ class BoardData {
       }
     }
   }
+  //get piece by its type 
   getpiecebytype(type, player) {
     for (const piece of this.pieces) {
       if (type === piece.type && player === piece.player) {
