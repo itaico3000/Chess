@@ -177,7 +177,7 @@ function onCellClick(event, row, col) {
       selectedCell.children.length > 1 &&
       piece !== undefined
     ) {
-      boardData.eat(piece.type, piece.player, row, col);
+      boardData.eat(piece.type, piece.player, row, col); //todo - eat only gets - the piece
       selectedCell.firstChild.remove("img");
       piece.player = savedPiece.player;
       piece.type = savedPiece.type;
@@ -187,13 +187,13 @@ function onCellClick(event, row, col) {
 
     if (turn > lastTurn) {
       selectedCell = undefined;
-      if (turn % 2 == 0) {
+      if (turn % 2 === 0) {  // todo - change turn to words
         let h2 = document.querySelector("h2");
-        h2.innerText = "this is white turn";
+        h2.innerText = "This is white player's turn";
         turnColor = WHITE_PLAYER;
       } else {
         let h2 = document.querySelector("h2");
-        h2.innerText = "this is black turn";
+        h2.innerText = "This is black player's turn";
         turnColor = BLACK_PLAYER;
       }
       if (checkIfchecked(turnColor) === WHITE_PLAYER) {
@@ -210,7 +210,9 @@ function onCellClick(event, row, col) {
         if (w) {
           if (!q) {
             if (!o) {
-              alert("checkMate !!!!!!!!!!!!!!!!!! white wins!!!!");
+              alert("checkMate !!!!!!!!!!!!!!!!!! Black wins!!!!");
+              createChessBoard();
+
             }
           }
         }
@@ -229,7 +231,8 @@ function onCellClick(event, row, col) {
         if (w) {
           if (!q) {
             if (!o) {
-              alert("checkMate !!!!!!!!!!!!!!!!!! BLACK wins!!!!");
+              alert("checkMate !!!!!!!!!!!!!!!!!!White wins!!!!");
+             createChessBoard();
             }
           }
         }
@@ -287,10 +290,8 @@ function checkIfchecked(turnColor) {
 
   for (let possibleMove of whitemoves) {
     let attacker = boardData.getPiece(possibleMove[0], possibleMove[1]);
-    let cell1 = table.rows[possibleMove[0]].cells[possibleMove[1]];
 
     if (attacker !== undefined && attacker.player === BLACK_PLAYER) {
-      const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       attack = attacker.getPossibleMoves();
       for (const possibleMov of attack) {
         let attackCheck = boardData.getPiece(possibleMov[0], possibleMov[1]);
@@ -309,7 +310,6 @@ function checkIfchecked(turnColor) {
   blackMoves = blackKing.check();
   for (let possibleMove of blackMoves) {
     let attacker = boardData.getPiece(possibleMove[0], possibleMove[1]);
-    let cell1 = table.rows[possibleMove[0]].cells[possibleMove[1]];
 
     if (attacker !== undefined && attacker.player === WHITE_PLAYER) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
@@ -322,7 +322,6 @@ function checkIfchecked(turnColor) {
           attackCheck.type === KING &&
           turnColor === BLACK_PLAYER
         ) {
-          cell.classList.add("attack");
 
           color = BLACK_PLAYER;
           return color;
@@ -344,6 +343,7 @@ function ifKingCanMove(color, attackColor) {
     console.log("the king cant move!!!!!!!!!!!!!!!");
     return true;
   }
+
 }
 function attack(color, attackColor) {
   let whiteKing = boardData.getpiecebytype(KING, color);
@@ -457,7 +457,7 @@ function checkWhoCanEat(attacker, color, attackColor) {
   let possibleMoves;
   let possible;
   let whitemoves = [];
-  check = [];
+  let check = [];
   let a = false;
   let attack;
   let attackerName;
@@ -465,7 +465,7 @@ function checkWhoCanEat(attacker, color, attackColor) {
     for (let j = 0; j < BOARD_SIZE; j++) {
       const cell = table.rows[i].cells[j];
 
-      possible = boardData.getPiece(i, j);
+      possible = boardData.getPiece(i, j); // pawn white or black
       if (
         possible !== undefined &&
         possible.player === color &&
@@ -481,24 +481,30 @@ function checkWhoCanEat(attacker, color, attackColor) {
       }
       if (possibleMoves !== undefined) {
         for (const possibleMove of possibleMoves) {
-          let attackCheck = boardData.getPiece(
+          let protector = boardData.getPiece(
             possibleMove[0],
             possibleMove[1]
           ); //pawn of possiblemove of white player
           if (
-            attackCheck !== undefined &&
-            attackCheck.row === attacker.row &&
-            attackCheck.col === attacker.col
+            protector !== undefined &&
+            protector.row === attacker.row &&
+            protector.col === attacker.col && possible.type!==KING
           ) {
             cell.classList.add("protector");
             a = true;
+            
+            
+            
             possibleMoves = undefined;
+          
           }
+
         }
       }
     }
-  }
 
+  }
+console.log('this is itai the fucking king ', check);
   return a;
 }
 function createChessBoard() {

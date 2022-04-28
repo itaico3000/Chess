@@ -1,5 +1,6 @@
 table {
   margin: 20px;
+  position: relative;
 }
 
 .light-cell {
@@ -14,20 +15,25 @@ table {
   height: 45px;
 }
 .selected{
-  background-color: rgb(202, 202, 15);
+  box-shadow:inset 0 0 40px rgb(202, 202, 15);
 }
 .selectedoptions{
-  background-color: blueviolet;
+  box-shadow:inset 0 0 40px blueviolet;
 }
 .nextmove{
-  background-color: aqua;
+  box-shadow:inset 0 0 40px aqua;
 }
 .attack {
-  background-color: brown;
+  box-shadow:inset 0 0 40px brown;
 }
 .protect{
-  background-color: rgb(26, 226, 86);
+  box-shadow:inset 0 0 40px rgb(26, 226, 86);
 }
 .protector{
-  background-color: rgb(209, 92, 14);
+  box-shadow:inset 0 0 40px rgb(209, 92, 14);
+}
+
+.winner{
+  position:absolute ;
+  
 }
