@@ -43,7 +43,6 @@ class Piece {
                   possibleMove[0] === whitemoves[whiteMove][0] &&
                   possibleMove[1] === whitemoves[whiteMove][1]
                 ) {
-                  console.log("this is white move , ", whitemoves);
 
                   rowAttacker = possible.row;
                   colAttacker = possible.col;

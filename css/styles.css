@@ -1,39 +1,95 @@
+*{
+  text-align: center;
+  align-items: center;
+}
+body {
+  margin: 0;
+  height: 100vh;
+  font-weight: 100;
+  background: radial-gradient(#a23982,#1f1013);
+}
 table {
-  margin: 20px;
   position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  border-spacing: 0ch;
 }
 
 .light-cell {
   background: rgb(211, 210, 210);
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
 }
 
 .dark-cell {
-  background: rgb(63, 63, 63);
-  width: 45px;
-  height: 45px;
+  background: rgb(66, 167, 57);
+  width: 50px;
+  height: 50px;
 }
 .selected{
   box-shadow:inset 0 0 40px rgb(202, 202, 15);
 }
 .selectedoptions{
-  box-shadow:inset 0 0 40px blueviolet;
+  box-shadow:inset 0 0 40px rgb(243, 146, 1);
 }
 .nextmove{
   box-shadow:inset 0 0 40px aqua;
 }
-.attack {
-  box-shadow:inset 0 0 40px brown;
-}
+
 .protect{
-  box-shadow:inset 0 0 40px rgb(26, 226, 86);
+  box-shadow:inset 0 0 40px rgb(26, 129, 226);
 }
 .protector{
-  box-shadow:inset 0 0 40px rgb(209, 92, 14);
+  box-shadow:inset 0 0 40px rgb(209, 14, 24);
 }
 
-.winner{
-  position:absolute ;
+.winner-dialog {
+  position: absolute;
+  left: 50%;
+  top: 50%;
   
-}
+  transform: translate(-50%, -50%);
+  background: rgb(212, 103, 103);
+  padding: 50;
+  border-radius: 10px;
+  width: max-content;
+
+  }
+  .container{
+    display: flex;
+      flex-direction: column;
+      width: 412px;
+      
+      margin-left: auto;
+      margin-right: auto;
+  }
+  h1 ,h2{
+    padding: 10px;
+    border: 2px solid rgb(173, 123, 31);
+    color: #dfceda;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    
+  }
+  .white-pawns{
+    position:relative;
+    display: flex;
+    border: 2px solid rgb(138, 138, 51);
+    flex-wrap:wrap-reverse ;
+    left: 70%;
+    top: 15%;
+    width: 250px;
+    align-items: flex-start;
+  }
+  .black-pawns{
+    position:relative;
+    display: flex;
+    border: 2px solid rgb(138, 138, 51);
+    flex-wrap:wrap-reverse ;
+    left: 70%;
+    top: 40%;
+    width: 250px;
+    align-items: flex-start;
+
+  }
+  
+  

@@ -104,7 +104,8 @@ function removeCellClasses() {
       table.rows[i].cells[j].classList.remove("attack");
       table.rows[i].cells[j].classList.remove("protect");
       table.rows[i].cells[j].classList.remove("protector");
-
+      
+      
       if (table.rows[i].cells[j].firstChild === null) {
         let remove = boardData.getPiece(i, j);
         if (remove !== undefined) {
@@ -114,6 +115,9 @@ function removeCellClasses() {
       }
     }
   }
+  let h2 = document.querySelector("h2");
+
+   h2.classList.remove('animate__zoomIn');
 }
 function addPossibleOptions(piece, possibleMoves, turn) {
   if (piece !== undefined && turn % 2 == 0 && piece.player === WHITE_PLAYER) {
@@ -189,54 +193,26 @@ function onCellClick(event, row, col) {
       selectedCell = undefined;
       if (turn % 2 === 0) {  // todo - change turn to words
         let h2 = document.querySelector("h2");
+         h2.classList.add('animate__animated');
+        h2.classList.add('animate__zoomIn');
+       
+
+
         h2.innerText = "This is white player's turn";
         turnColor = WHITE_PLAYER;
+        AllCheckPossibilities(turnColor);
       } else {
         let h2 = document.querySelector("h2");
+        h2.classList.add('animate__animated');
+        h2.classList.add('animate__zoomIn');
+       
         h2.innerText = "This is black player's turn";
+       
         turnColor = BLACK_PLAYER;
+        AllCheckPossibilities(turnColor);
       }
-      if (checkIfchecked(turnColor) === WHITE_PLAYER) {
-        let color = WHITE_PLAYER;
-        let attackColor = BLACK_PLAYER;
-        alert("check! protect your king first time");
-        let o = checkWhoCanEat(attack(color, attackColor), color, attackColor);
-        let w = ifKingCanMove(color, attackColor);
-        let q = checkWhoCanBlock(
-          attack(color, attackColor),
-          color,
-          attackColor
-        );
-        if (w) {
-          if (!q) {
-            if (!o) {
-              alert("checkMate !!!!!!!!!!!!!!!!!! Black wins!!!!");
-              createChessBoard();
-
-            }
-          }
-        }
-      } else if (checkIfchecked(turnColor) === BLACK_PLAYER) {
-        let color = BLACK_PLAYER;
-        let attackColor = WHITE_PLAYER;
-        alert("check! protect your black king first time");
-        console.log(attack(color, attackColor), " this is attack!");
-        let o = checkWhoCanEat(attack(color, attackColor), color, attackColor);
-        let w = ifKingCanMove(color, attackColor);
-        let q = checkWhoCanBlock(
-          attack(color, attackColor),
-          color,
-          attackColor
-        );
-        if (w) {
-          if (!q) {
-            if (!o) {
-              alert("checkMate !!!!!!!!!!!!!!!!!!White wins!!!!");
-             createChessBoard();
-            }
-          }
-        }
-      }
+      
+     
     }
   }
 
@@ -252,6 +228,85 @@ function onCellClick(event, row, col) {
 
   child = [];
 }
+
+function AllCheckPossibilities(turnColor) {
+  if (checkIfchecked(turnColor) === WHITE_PLAYER) {
+    let color = WHITE_PLAYER;
+    let attackColor = BLACK_PLAYER;
+    alert("check! protect your king first time");
+    let o = checkWhoCanEat(attack(color, attackColor), color, attackColor);
+    let w = ifKingCanMove(color, attackColor);
+    let q = checkWhoCanBlock(
+      attack(color, attackColor),
+      color,
+      attackColor
+    );
+    if (w) {
+      if (!q) {
+        if (!o) {
+          
+          div = document.createElement('div');
+          div.innerText ="CHECK MATE! BLACK WINS";
+          div.classList.add('winner-dialog');
+          let input =document.querySelector('input');
+          document.querySelector('input').style.display='block';
+          div.append(input);
+          input.onclick = ()=>{removeAll();
+            turn =0;
+            let h2 = document.querySelector("h2");
+            h2.innerText = "This is white player's turn";
+
+
+        };
+          table.append(div);
+          
+
+        }
+      }
+    }
+  } else if (checkIfchecked(turnColor) === BLACK_PLAYER) {
+    let color = BLACK_PLAYER;
+    let attackColor = WHITE_PLAYER;
+    alert("check! protect your black king first time");
+    let o = checkWhoCanEat(attack(color, attackColor), color, attackColor);
+    let w = ifKingCanMove(color, attackColor);
+    let q = checkWhoCanBlock(
+      attack(color, attackColor),
+      color,
+      attackColor
+    );
+    if (w) {
+      if (!q) {
+        if (!o) {
+          div = document.createElement('div');
+          div.innerText ="CHECK MATE! WHITE WINS";
+           
+          div.classList.add('winner-dialog');
+         
+          let input =document.querySelector('input');
+          document.querySelector('input').style.display='block';
+          div.append(input);
+          input.onclick = ()=>{removeAll();
+            turn =0;
+            let h2 = document.querySelector("h2");
+            h2.innerText = "This is white player's turn";
+
+
+        };
+          table.append(div);
+        }
+      }
+    }
+  }
+  
+}
+
+function removeAll(){
+  let table = document.querySelector('table');
+  table.remove();
+        createChessBoard();
+}
+
 function move(savedPossibleMoves, possibleMoves, row, col) {
   let turn = 0;
   for (const i of savedPossibleMoves) {
@@ -277,6 +332,9 @@ function move(savedPossibleMoves, possibleMoves, row, col) {
   }
   return turn;
 }
+
+
+
 function checkIfchecked(turnColor) {
   let whiteKing = boardData.getpiecebytype(KING, WHITE_PLAYER);
   let blackKing = boardData.getpiecebytype(KING, BLACK_PLAYER);
@@ -331,20 +389,31 @@ function checkIfchecked(turnColor) {
   }
   return a;
 }
+
+
+
 function ifKingCanMove(color, attackColor) {
   let whiteKing = boardData.getpiecebytype(KING, color);
   let possibleMoves = [];
   let whitemoves = [];
   check = [];
   whitemoves = whiteKing.ifKingCanMove(color, attackColor);
-  console.log(whitemoves);
-
-  if ((whitemoves = [])) {
-    console.log("the king cant move!!!!!!!!!!!!!!!");
+  console.log('this is whiteMoves ', whitemoves);
+  if ((whitemoves === [])) {
     return true;
   }
-
+  if (whitemoves.length===1) { 
+   let d = boardData.getPiece(whitemoves[0][0],whitemoves[0][1])
+   if (d!==undefined) {
+     return true;
+   }
+  }
+  return false;
 }
+
+
+
+
 function attack(color, attackColor) {
   let whiteKing = boardData.getpiecebytype(KING, color);
   let blackKing = boardData.getpiecebytype(KING, BLACK_PLAYER);
@@ -375,6 +444,8 @@ function attack(color, attackColor) {
   }
   return [];
 }
+
+
 
 function checkWhoCanBlock(attacker, color, attackColor) {
   let possibleMoves = [];
@@ -418,7 +489,7 @@ function checkWhoCanBlock(attacker, color, attackColor) {
       } else if (
         possible !== undefined &&
         possible.player === color &&
-        possible.type !== KING
+        possible.type !== KING 
       ) {
         possibleMoves = possible.getPossibleMoves();
       }
@@ -453,6 +524,9 @@ function checkWhoCanBlock(attacker, color, attackColor) {
 
   return a;
 }
+
+
+
 function checkWhoCanEat(attacker, color, attackColor) {
   let possibleMoves;
   let possible;
@@ -488,11 +562,10 @@ function checkWhoCanEat(attacker, color, attackColor) {
           if (
             protector !== undefined &&
             protector.row === attacker.row &&
-            protector.col === attacker.col && possible.type!==KING
+            protector.col === attacker.col &&possible.type!=KING
           ) {
             cell.classList.add("protector");
             a = true;
-            
             
             
             possibleMoves = undefined;
@@ -504,9 +577,11 @@ function checkWhoCanEat(attacker, color, attackColor) {
     }
 
   }
-console.log('this is itai the fucking king ', check);
   return a;
 }
+
+
+
 function createChessBoard() {
   // Create empty chess board HTML:
   table = document.createElement("table");
@@ -534,5 +609,7 @@ function createChessBoard() {
     addImage(cell, piece.player, piece.type);
   }
 }
+
+
 
 window.addEventListener("load", createChessBoard);
